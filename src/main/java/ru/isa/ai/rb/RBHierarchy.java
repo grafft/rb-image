@@ -37,24 +37,30 @@ public class RBHierarchy {
                 Map<RecognitionBlock, DoubleMatrix1D> controlVectors = new HashMap<>();
                 int counter = 0;
                 for (RecognitionBlock block : hierarchy.get(key)) {
+                    // if it is the first iteration put default control
                     if (totalT == 0) {
                         DenseDoubleMatrix1D simpleControl = new DenseDoubleMatrix1D(block.getCurrentL());
                         simpleControl.assign(1);
                         block.initialization(simpleControl);
                     }
+                    // for high levels of hierarchy
                     if (block.getChildBlocks().size() > 0) {
+                        // calculate length of input vector
                         int length = 0;
                         for (RecognitionBlock child : block.getChildBlocks()) {
                             length += child.getCurrentL();
                         }
                         DoubleMatrix1D input = new SparseDoubleMatrix1D(length);
+                        // put all inputs in one vector
                         int currentIndex = 0;
                         for (RecognitionBlock child : block.getChildBlocks()) {
                             input.viewPart(currentIndex, child.getCurrentL()).assign(child.getCurrentOutput());
                             currentIndex++;
                         }
+                        // calculate output and child control
                         DoubleMatrix1D control = block.iterate(input);
                         currentIndex = 0;
+                        // collect control for children
                         for (RecognitionBlock child : block.getChildBlocks()) {
                             DoubleMatrix1D prevControl = controlVectors.get(child);
                             if (prevControl == null) {
@@ -68,6 +74,7 @@ public class RBHierarchy {
                         counter++;
                     }
                 }
+                // init each child with control vector
                 for (RecognitionBlock block : controlVectors.keySet()) {
                     DoubleMatrix1D control = controlVectors.get(block);
                     double maxValue = control.getMaxLocation()[0];

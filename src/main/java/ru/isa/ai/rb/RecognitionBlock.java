@@ -7,7 +7,11 @@ import cern.colt.list.tint.IntArrayList;
 import cern.colt.matrix.tbit.BitMatrix;
 import cern.colt.matrix.tbit.BitVector;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.DoubleMatrix2D;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
+import cern.jet.math.tdouble.DoubleFunctions;
 import cern.jet.math.tdouble.DoubleMult;
 import cern.jet.math.tdouble.DoublePlusMultFirst;
 
@@ -15,7 +19,6 @@ import java.util.*;
 
 /**
  * Created by GraffT on 09.10.2014.
- *
  */
 public class RecognitionBlock {
     private int id;
@@ -27,6 +30,7 @@ public class RecognitionBlock {
     private int t = 0;
 
     private Map<Integer, List<BitMatrix>> predictionMatrices;
+    private Map<Integer, List<DoubleMatrix2D>> learningMatrices;
     private List<RecognitionBlock> childBlocks = new ArrayList<>();
 
     private DoubleMatrix1D currentOutput;
@@ -40,8 +44,14 @@ public class RecognitionBlock {
         this.currentQ = currentQ;
         this.currentL = (int) (currentQ * multiplier);
         predictionMatrices = new HashMap<>();
-        for (int i = 0; i < currentL; i++)
-            predictionMatrices.put(i, new ArrayList<BitMatrix>());
+        for (int i = 0; i < currentL; i++) {
+            List<DoubleMatrix2D> learning = new ArrayList<>();
+            DoubleMatrix2D firstLearn = new DenseDoubleMatrix2D(currentQ, currentH);
+            //firstLearn.assign()
+            List<BitMatrix> prediction = new ArrayList<>();
+
+            predictionMatrices.put(i, prediction);
+        }
     }
 
     public void initialization(DoubleMatrix1D controlVector) {
