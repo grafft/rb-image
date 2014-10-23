@@ -56,7 +56,8 @@ public class NaiveBayesClassifier {
                 probabilities.put(clazz, probabilities.get(clazz) + Math.log((temp + 1) / (totalWords + totalWordsCount.get(clazz))));
             }
         }
-        String result = probabilities.entrySet().stream().sorted((o1, o2) -> -o1.getValue().compareTo(o2.getValue())).findFirst().get().getKey();
+        String result = probabilities.entrySet().stream().sorted((o1, o2) -> -o1.getValue().compareTo(o2.getValue())).
+                findFirst().get().getKey();
         final double expSum = probabilities.values().stream().reduce(0.0, (res, item) -> res + Math.exp(item));
 
         Map<String, Double> newMap = probabilities.entrySet().stream().

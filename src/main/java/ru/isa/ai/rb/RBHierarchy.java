@@ -20,7 +20,7 @@ public class RBHierarchy {
 
     public RBHierarchy(int numLevels, int[] timeForLevels) {
         for (int i = 0; i < numLevels; i++) {
-            hierarchy.put(i, new ArrayList<RecognitionBlock>());
+            hierarchy.put(i, new ArrayList<>());
             times.put(i, timeForLevels[i]);
         }
     }
