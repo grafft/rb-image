@@ -18,22 +18,39 @@ public class HTMPictureTest {
 
         byte[][] images = reader.readData();
         byte[] labels = reader.getLabels();
-        int index = (int) (Math.random() * images.length);
-        byte[][] movie = createHorizontalMovie(images[index]);
 
         HTMPicture htmPicture = new HTMPicture();
-        htmPicture.learnMovie(movie, labels[index]);
+        for (int i = 0; i < 100; i++) {
+            htmPicture.learnMovie(createHorizontalMovie(images[i]), labels[i]);
+            htmPicture.learnMovie(createVerticalMovie(images[i]), labels[i]);
+        }
 
-        assert labels[index] == htmPicture.recognize(movie[0]);
+        htmPicture.finalizeLearning();
+        assert labels[1001] == htmPicture.recognize(images[1001]);
     }
 
     public static byte[][] createHorizontalMovie(byte[] image) {
         int size = (int) Math.sqrt(image.length);
-        byte[][] movie = new byte[image.length][2 * size];
+        byte[][] movie = new byte[2 * size][image.length];
         for (int shift = -size; shift < size; shift++) {
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < size; k++) {
-                    movie[shift + size][j * size + k] = (k + shift < size || k + shift >= 0) ? (byte) (0xFF & image[j * size + k + shift]) : 0;
+                    movie[shift + size][j * size + k] = (k + shift < size && k + shift >= 0) ?
+                            (byte) ((0xFF & image[j * size + k + shift]) > 128 ? 1 : 0) : 0;
+                }
+            }
+        }
+        return movie;
+    }
+
+    public static byte[][] createVerticalMovie(byte[] image) {
+        int size = (int) Math.sqrt(image.length);
+        byte[][] movie = new byte[2 * size][image.length];
+        for (int shift = -size; shift < size; shift++) {
+            for (int j = 0; j < size; j++) {
+                for (int k = 0; k < size; k++) {
+                    movie[shift + size][j * size + k] = (j + shift < size && j + shift >= 0) ?
+                            (byte) ((0xFF & image[(j + shift) * size + k]) > 128 ? 1 : 0) : 0;
                 }
             }
         }

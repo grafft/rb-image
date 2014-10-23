@@ -18,10 +18,12 @@ public class HTMPicture {
     }
 
     public void learnMovie(byte[][] movie, byte label) {
-        for (int i = 0; i < 28 * 2; i++) {
-            byte[] image = movie[i];
+        for (byte[] image : movie) {
             learnFirstLevel(image);
         }
+    }
+
+    public void finalizeLearning(){
         for (int i = 0; i < 7 * 7; i++) {
             firstLevel[i].generateTemporalGroups();
         }
