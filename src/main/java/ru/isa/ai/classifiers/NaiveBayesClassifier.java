@@ -1,6 +1,7 @@
 package ru.isa.ai.classifiers;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Author: Aleksandr Panov
@@ -17,7 +18,7 @@ public class NaiveBayesClassifier {
 
     public void addExample(String text, String clazz) {
         if (!examples.containsKey(clazz))
-            examples.put(clazz, new ArrayList<String>());
+            examples.put(clazz, new ArrayList<>());
         examples.get(clazz).add(text);
         totalDocs++;
     }
@@ -34,7 +35,7 @@ public class NaiveBayesClassifier {
                     words.add(word);
                     wordCount++;
                     if (!wordMap.containsKey(word))
-                        wordMap.put(word, 0);
+                        wordMap.put(word, 1);
                     else
                         wordMap.put(word, wordMap.get(word) + 1);
                 }
@@ -55,15 +56,13 @@ public class NaiveBayesClassifier {
                 probabilities.put(clazz, probabilities.get(clazz) + Math.log((temp + 1) / (totalWords + totalWordsCount.get(clazz))));
             }
         }
-        String result = null;
-        double maxProb = -Double.MAX_VALUE;
-        for (String clazz : probabilities.keySet()) {
-            if (probabilities.get(clazz) > maxProb) {
-                result = clazz;
-                maxProb = probabilities.get(clazz);
-            }
-        }
-        System.out.println(maxProb);
+        String result = probabilities.entrySet().stream().sorted((o1, o2) -> -o1.getValue().compareTo(o2.getValue())).findFirst().get().getKey();
+        final double expSum = probabilities.values().stream().reduce(0.0, (res, item) -> res + Math.exp(item));
+
+        Map<String, Double> newMap = probabilities.entrySet().stream().
+                collect(Collectors.toMap(Map.Entry::getKey, entry -> (Math.exp(entry.getValue()) / expSum)));
+        System.out.println(newMap.entrySet().stream().map(entry -> String.format("%s->%f", entry.getKey(), entry.getValue())).
+                collect(Collectors.joining("; ")));
         return result;
     }
 
