@@ -10,10 +10,10 @@ import java.util.stream.IntStream;
  * Time: 11:14
  */
 public class HTMNode {
-    public static final int MAX_TG_NUMBER = 10;
     public static final double SIGMA = 0.1;
 
     private int[] m_nClusterNr;
+    private int maxTGNumber = 10;
 
     private List<MarkovNode> markovNet = new ArrayList<>();
     private MarkovNode previous = null;
@@ -40,35 +40,40 @@ public class HTMNode {
         normalize();
 
         int nInstances = markovNet.size();
-        List<Integer>[] nClusterID = new ArrayList[nInstances];
-
-        for (int i = 0; i < nInstances; i++) {
-            nClusterID[i] = new ArrayList<>();
-            nClusterID[i].add(i);
-        }
-        // calculate distance matrix
-        // used for keeping track of hierarchy
-        ClusterNode[] clusterNodes = new ClusterNode[nInstances];
-        doLinkClustering(nInstances, nClusterID, clusterNodes);
-
-        // move all clusters in m_nClusterID array
-        // & collect hierarchy
-        int iCurrent = 0;
         m_nClusterNr = new int[nInstances];
-        for (int i = 0; i < nInstances; i++) {
-            if (nClusterID[i].size() > 0) {
-                for (int j = 0; j < nClusterID[i].size(); j++) {
-                    m_nClusterNr[nClusterID[i].get(j)] = iCurrent;
-                }
-                iCurrent++;
+
+        if (nInstances > 1) {
+            List<Integer>[] nClusterID = new ArrayList[nInstances];
+
+            for (int i = 0; i < nInstances; i++) {
+                nClusterID[i] = new ArrayList<>();
+                nClusterID[i].add(i);
             }
+            // calculate distance matrix
+            // used for keeping track of hierarchy
+            ClusterNode[] clusterNodes = new ClusterNode[nInstances];
+            doLinkClustering(nInstances, nClusterID, clusterNodes);
+
+            // move all clusters in m_nClusterID array
+            // & collect hierarchy
+            int iCurrent = 0;
+
+            for (int i = 0; i < nInstances; i++) {
+                if (nClusterID[i].size() > 0) {
+                    for (int j = 0; j < nClusterID[i].size(); j++) {
+                        m_nClusterNr[nClusterID[i].get(j)] = iCurrent;
+                    }
+                    iCurrent++;
+                }
+            }
+        } else if (nInstances == 1) {
+            m_nClusterNr[0] = 0;
         }
     }
 
-    private void doLinkClustering(int nClusters, List<Integer>[] nClusterID, ClusterNode[] clusterNodes) {
-        int nInstances = markovNet.size();
-        PriorityQueue<Tuple> queue = new PriorityQueue<>(nClusters * nClusters
-                / 2, new TupleComparator());
+    private void doLinkClustering(int nInstances, List<Integer>[] nClusterID, ClusterNode[] clusterNodes) {
+        int nClusters = nInstances;
+        PriorityQueue<Tuple> queue = new PriorityQueue<>(nClusters * nClusters / 2, new TupleComparator());
         double[][] fDistance0 = new double[nClusters][nClusters];
 
         for (int i = 0; i < nClusters; i++) {
@@ -79,7 +84,7 @@ public class HTMNode {
                 queue.add(new Tuple(fDistance0[i][j], i, j, 1, 1));
             }
         }
-        while (nClusters > MAX_TG_NUMBER) {
+        while (nClusters > maxTGNumber) {
             // find closest two clusters
             // use priority queue to find next best pair to cluster
             Tuple t;
@@ -149,9 +154,9 @@ public class HTMNode {
     }
 
     public double[] process(byte[] input) {
-        double[] result = new double[MAX_TG_NUMBER];
+        double[] result = new double[maxTGNumber];
         Map<Integer, Double> clusterDists = new HashMap<>();
-        for (int i = 0; i < MAX_TG_NUMBER; i++)
+        for (int i = 0; i < maxTGNumber; i++)
             clusterDists.put(i, Double.MAX_VALUE);
 
         for (MarkovNode node : markovNet) {
@@ -162,14 +167,14 @@ public class HTMNode {
                 clusterDists.put(m_nClusterNr[node.index], dist);
         }
         double sum = 0;
-        for (int i = 0; i < MAX_TG_NUMBER; i++) {
+        for (int i = 0; i < maxTGNumber; i++) {
             double dist = clusterDists.get(i);
             double newDist = Math.exp(-dist * dist / SIGMA);
             sum += newDist;
             clusterDists.put(i, newDist);
         }
 
-        for (int i = 0; i < MAX_TG_NUMBER; i++) {
+        for (int i = 0; i < maxTGNumber; i++) {
             result[i] = clusterDists.get(i) / sum;
         }
         return result;
@@ -204,6 +209,10 @@ public class HTMNode {
             }
         }
         return fBestDist;
+    }
+
+    public void setMaxTGNumber(int maxTGNumber) {
+        this.maxTGNumber = maxTGNumber;
     }
 
     private class MarkovNode {

@@ -5,6 +5,7 @@ import ru.isa.ai.htm.MNISTDatasetReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Author: Aleksandr Panov
@@ -12,6 +13,8 @@ import java.io.IOException;
  * Time: 11:36
  */
 public class HTMPictureTest {
+    public static final int SIZE = 100;
+
     public static void main(String[] args) throws IOException {
         File testFile = new File(HTMPictureTest.class.getClassLoader().getResource("train-labels-idx1-ubyte.gz").getPath());
         MNISTDatasetReader reader = new MNISTDatasetReader(testFile.getParentFile().getPath());
@@ -20,14 +23,24 @@ public class HTMPictureTest {
         byte[] labels = reader.getLabels();
 
         HTMPicture htmPicture = new HTMPicture();
-        for (int i = 0; i < 100; i++) {
-            htmPicture.learnMovie(createHorizontalMovie(images[i]), labels[i]);
-            htmPicture.learnMovie(createVerticalMovie(images[i]), labels[i]);
+        for (int i = 0; i < SIZE; i++) {
+            htmPicture.learnMovie1(createHorizontalMovie(images[i]));
+            htmPicture.learnMovie1(createVerticalMovie(images[i]));
+        }
+        htmPicture.normalize1();
+        for (int i = SIZE; i < 2 * SIZE; i++) {
+            htmPicture.learnMovie2(createHorizontalMovie(images[i]));
+            htmPicture.learnMovie2(createVerticalMovie(images[i]));
+        }
+        htmPicture.normalize2();
+
+        for (int i = 2 * SIZE; i < 3 * SIZE; i++) {
+            htmPicture.learnMovie3(createHorizontalMovie(images[i]), labels[i]);
+            htmPicture.learnMovie3(createVerticalMovie(images[i]), labels[i]);
         }
 
-        htmPicture.finalizeLearning();
-        int result = htmPicture.recognize(images[1001]);
-        assert (labels[1001] == result);
+        byte[] result = htmPicture.firstRecognize(images[1001]);
+        System.out.println(Arrays.toString(result));
     }
 
     public static byte[][] createHorizontalMovie(byte[] image) {
