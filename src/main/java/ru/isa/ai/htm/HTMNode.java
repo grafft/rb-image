@@ -154,11 +154,10 @@ public class HTMNode {
         for (int i = 0; i < MAX_TG_NUMBER; i++)
             clusterDists.put(i, Double.MAX_VALUE);
 
-
         for (MarkovNode node : markovNet) {
             double dist = IntStream.range(0, node.pattern.length)
                     .map(index -> Math.abs(node.pattern[index] - input[index]))
-                    .sum() / input.length;
+                    .sum() / (0.0 + input.length);
             if (dist < clusterDists.get(m_nClusterNr[node.index]))
                 clusterDists.put(m_nClusterNr[node.index], dist);
         }

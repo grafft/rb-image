@@ -26,7 +26,8 @@ public class HTMPictureTest {
         }
 
         htmPicture.finalizeLearning();
-        assert labels[1001] == htmPicture.recognize(images[1001]);
+        int result = htmPicture.recognize(images[1001]);
+        assert (labels[1001] == result);
     }
 
     public static byte[][] createHorizontalMovie(byte[] image) {
