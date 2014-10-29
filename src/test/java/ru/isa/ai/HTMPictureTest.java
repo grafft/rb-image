@@ -5,7 +5,6 @@ import ru.isa.ai.htm.MNISTDatasetReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Author: Aleksandr Panov
@@ -39,8 +38,9 @@ public class HTMPictureTest {
             htmPicture.learnMovie3(createVerticalMovie(images[i]), labels[i]);
         }
 
-        byte[] result = htmPicture.firstRecognize(images[1001]);
-        System.out.println(Arrays.toString(result));
+        int check = (int) (Math.random() * 1000);
+        byte result = htmPicture.recognize(negative(images[check]));
+        System.out.println("Classify image:\n" + imageToString(images[check]) + "as " + result + " when was " + labels[check]);
     }
 
     public static byte[][] createHorizontalMovie(byte[] image) {
@@ -69,5 +69,24 @@ public class HTMPictureTest {
             }
         }
         return movie;
+    }
+
+    public static byte[] negative(byte[] positive) {
+        byte[] result = new byte[positive.length];
+        for (int i = 0; i < positive.length; i++)
+            result[i] = (byte) ((0xFF & positive[i]) > 128 ? 1 : 0);
+        return result;
+    }
+
+    public static String imageToString(byte[] image) {
+        int size = (int) Math.sqrt(image.length);
+        StringBuilder builder = new StringBuilder();
+        for (int j = 0; j < size; j++) {
+            for (int k = 0; k < size; k++) {
+                builder.append((0xFF & image[j * size + k]) > 128 ? "x" : " ");
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 }

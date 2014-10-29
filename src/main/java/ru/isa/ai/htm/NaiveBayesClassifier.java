@@ -24,16 +24,13 @@ public class NaiveBayesClassifier {
     }
 
     public void buildModel() {
-        Set<Integer> bits = new HashSet<>();
-
         for (Map.Entry<Byte, List<byte[]>> entry : examples.entrySet()) {
             patternCount.put(entry.getKey(), entry.getValue().size());
             Map<Integer, Integer> bitMap = new HashMap<>();
             int bitCount = 0;
             for (byte[] oldPattern : entry.getValue()) {
-                for (int i=0; i < oldPattern.length;i++) {
-                    if(oldPattern[i] > 0) {
-                        bits.add(i);
+                for (int i = 0; i < oldPattern.length; i++) {
+                    if (oldPattern[i] > 0) {
                         bitCount++;
                         if (!bitMap.containsKey(i))
                             bitMap.put(i, 1);
@@ -44,18 +41,20 @@ public class NaiveBayesClassifier {
             }
             bitsCount.put(entry.getKey(), bitMap);
             totalBitsCount.put(entry.getKey(), bitCount);
+            totalBits += bitCount;
         }
-        totalBits = bits.size();
     }
 
     public byte classify(byte[] pattern) {
         Map<Byte, Double> probabilities = new HashMap<>();
-        for (int i =0; i <pattern.length; i++) {
-            for (byte clazz : patternCount.keySet()) {
-                if (!probabilities.containsKey(clazz))
-                    probabilities.put(clazz, Math.log(patternCount.get(clazz) / (totalPatterns + 0.0)));
-                double temp = bitsCount.get(clazz).get(i) == null ? 0 : bitsCount.get(clazz).get(i);
-                probabilities.put(clazz, probabilities.get(clazz) + Math.log((temp + 1) / (totalBits + totalBitsCount.get(clazz))));
+        for (int i = 0; i < pattern.length; i++) {
+            if (pattern[i] > 0) {
+                for (byte clazz : patternCount.keySet()) {
+                    if (!probabilities.containsKey(clazz))
+                        probabilities.put(clazz, Math.log(patternCount.get(clazz) / (totalPatterns + 0.0)));
+                    double temp = bitsCount.get(clazz).get(i) == null ? 0 : bitsCount.get(clazz).get(i);
+                    probabilities.put(clazz, probabilities.get(clazz) + Math.log((temp + 1) / (totalBits + totalBitsCount.get(clazz))));
+                }
             }
         }
         Byte result = probabilities.entrySet().stream().sorted((o1, o2) -> -o1.getValue().compareTo(o2.getValue())).

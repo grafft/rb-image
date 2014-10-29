@@ -122,7 +122,7 @@ public class HTMPicture {
         return output;
     }
 
-    private byte recognize(byte[] input) {
+    public byte recognize(byte[] input) {
         classifier.buildModel();
         return classifier.classify(input);
     }
