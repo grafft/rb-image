@@ -16,7 +16,8 @@ public class HTMPicture {
 
     private HTMNode[] firstLevel = new HTMNode[DIMENSION_1 * DIMENSION_1];
     private HTMNode[] secondLevel = new HTMNode[DIMENSION_2 * DIMENSION_2];
-    private HTMNode topNode = new HTMNode();
+
+    private NaiveBayesClassifier classifier = new NaiveBayesClassifier();
 
     public HTMPicture() {
         for (int i = 0; i < DIMENSION_1 * DIMENSION_1; i++) {
@@ -69,7 +70,7 @@ public class HTMPicture {
             byte[] input = firstRecognize(aMovie); // 10 * 7 * 7 length
             byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
 
-            topNode.learn(input2);
+            classifier.addExample(input2, label);
         }
     }
 
@@ -119,5 +120,10 @@ public class HTMPicture {
             }
         }
         return output;
+    }
+
+    private byte recognize(byte[] input) {
+        classifier.buildModel();
+        return classifier.classify(input);
     }
 }

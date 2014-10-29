@@ -22,16 +22,8 @@ public class MarkovNode {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public byte[] getPattern() {
         return pattern;
-    }
-
-    public void setPattern(byte[] pattern) {
-        this.pattern = pattern;
     }
 
     public Map<MarkovNode, Double> getConnectedNode() {

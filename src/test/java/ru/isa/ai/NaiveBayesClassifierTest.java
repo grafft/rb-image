@@ -1,6 +1,6 @@
 package ru.isa.ai;
 
-import ru.isa.ai.classifiers.NaiveBayesClassifier;
+import ru.isa.ai.classifiers.NaiveBayesStringClassifier;
 
 /**
  * Author: Aleksandr Panov
@@ -9,7 +9,7 @@ import ru.isa.ai.classifiers.NaiveBayesClassifier;
  */
 public class NaiveBayesClassifierTest {
     public static void main(String[] args) {
-        NaiveBayesClassifier c = new NaiveBayesClassifier();
+        NaiveBayesStringClassifier c = new NaiveBayesStringClassifier();
         c.addExample("предоставляю услуги бухгалтера", "SPAM");
         c.addExample("спешите купить виагру", "SPAM");
         c.addExample("надо купить молоко", "HAM");

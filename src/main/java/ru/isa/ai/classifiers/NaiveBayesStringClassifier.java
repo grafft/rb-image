@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * Date: 22.10.2014
  * Time: 16:25
  */
-public class NaiveBayesClassifier {
+public class NaiveBayesStringClassifier {
     private Map<String, List<String>> examples = new HashMap<>();
     private Map<String, Integer> docsCount = new HashMap<>();
     private Map<String, Map<String, Integer>> wordsCount = new HashMap<>();
