@@ -38,7 +38,7 @@ public class HTMPictureTest {
             htmPicture.learnMovie3(createVerticalMovie(images[i]), labels[i]);
         }
 
-        int check = (int) (Math.random() * 1000);
+        int check = (int) (Math.random() * SIZE);
         byte result = htmPicture.recognize(negative(images[check]));
         System.out.println("Classify image:\n" + imageToString(images[check]) + "as " + result + " when was " + labels[check]);
     }

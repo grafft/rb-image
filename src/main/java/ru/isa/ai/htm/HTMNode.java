@@ -59,11 +59,11 @@ public class HTMNode {
             clusterDists.put(i, Double.MAX_VALUE);
 
         for (MarkovNode node : markovNet) {
-            double dist = IntStream.range(0, node.getPattern().length)
+            double distance = IntStream.range(0, node.getPattern().length)
                     .map(index -> Math.abs(node.getPattern()[index] - input[index]))
                     .sum() / (0.0 + input.length);
-            if (dist < clusterDists.get(clusterer.getClusterNumbers()[node.getIndex()]))
-                clusterDists.put(clusterer.getClusterNumbers()[node.getIndex()], dist);
+            if (distance < clusterDists.get(clusterer.getClusterNumbers()[node.getIndex()]))
+                clusterDists.put(clusterer.getClusterNumbers()[node.getIndex()], distance);
         }
         double sum = 0;
         for (int i = 0; i < maxTGNumber; i++) {

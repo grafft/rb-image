@@ -12,7 +12,7 @@ public class HTMPicture {
     public static final int DIMENSION_1 = 7;
     public static final int DIMENSION_2 = 4;
     public static final int OUTPUT_SIZE_1 = 10;
-    public static final int OUTPUT_SIZE_2 = 5;
+    public static final int OUTPUT_SIZE_2 = 10;
 
     private HTMNode[] firstLevel = new HTMNode[DIMENSION_1 * DIMENSION_1];
     private HTMNode[] secondLevel = new HTMNode[DIMENSION_2 * DIMENSION_2];
@@ -115,15 +115,19 @@ public class HTMPicture {
         for (int i = 0; i < DIMENSION_2 * DIMENSION_2; i++) {
             byte[] cutInput = secondLevelCut(input, i);
             double[] result = secondLevel[i].process(cutInput);
+            double max = Arrays.stream(result).max().getAsDouble();
             for (int j = 0; j < OUTPUT_SIZE_2; j++) {
-                output[i * OUTPUT_SIZE_2 + j] = (byte) (result[j] > 0.5 ? 1 : 0);
+                output[i * OUTPUT_SIZE_2 + j] = (byte) (result[j] < max ? 0 : 1);
             }
         }
         return output;
     }
 
-    public byte recognize(byte[] input) {
+    public byte recognize(byte[] image) {
         classifier.buildModel();
-        return classifier.classify(input);
+
+        byte[] input = firstRecognize(image); // 10 * 7 * 7 length
+        byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
+        return classifier.classify(input2);
     }
 }
