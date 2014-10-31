@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
  * Date: 31.10.2014
  * Time: 19:01
  */
-public class ClusteredHTMNode {
+public class ClusteredHTMNode extends HTMNode{
     private int k = 50;
     private OnlineKMeansClusterer inputClusterer;
     protected List<ClusteredMarkovNode> markovNet = new ArrayList<>();
