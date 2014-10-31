@@ -11,11 +11,11 @@ import java.util.stream.IntStream;
 public class HTMNode {
     public static final double SIGMA = 0.1;
 
-    private int maxTGNumber = 10;
+    protected int maxTGNumber = 10;
 
-    private List<MarkovNode> markovNet = new ArrayList<>();
-    private MarkovNode previous = null;
-    private AgglomerativeHierarchicalClusterer clusterer;
+    protected List<MarkovNode> markovNet = new ArrayList<>();
+    protected MarkovNode previous = null;
+    protected AgglomerativeHierarchicalClusterer clusterer;
 
     public void learn(byte[] input) {
         int found = IntStream.range(0, markovNet.size())

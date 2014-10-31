@@ -21,10 +21,11 @@ public class HTMPicture {
 
     public HTMPicture() {
         for (int i = 0; i < DIMENSION_1 * DIMENSION_1; i++) {
-            firstLevel[i] = new HTMNode();
+            firstLevel[i] = new ClusteredHTMNode(50, INPUT_SIZE * INPUT_SIZE / DIMENSION_1 * DIMENSION_1);
             firstLevel[i].setMaxTGNumber(OUTPUT_SIZE_1);
         }
         for (int i = 0; i < DIMENSION_2 * DIMENSION_2; i++) {
+            //int size = DIMENSION_1 / DIMENSION_2 + ((DIMENSION_1 % DIMENSION_2 == 0) ? 0 : 1);
             secondLevel[i] = new HTMNode();
             secondLevel[i].setMaxTGNumber(OUTPUT_SIZE_2);
         }
@@ -123,7 +124,7 @@ public class HTMPicture {
         return output;
     }
 
-    public void prepare(){
+    public void prepare() {
         classifier.buildModel();
     }
 
