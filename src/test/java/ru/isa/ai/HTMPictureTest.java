@@ -38,9 +38,12 @@ public class HTMPictureTest {
             htmPicture.learnMovie3(createVerticalMovie(images[i]), labels[i]);
         }
 
-        int check = (int) (Math.random() * SIZE);
-        byte result = htmPicture.recognize(negative(images[check]));
-        System.out.println("Classify image:\n" + imageToString(images[check]) + "as " + result + " when was " + labels[check]);
+        htmPicture.prepare();
+        for (int i = 0; i < 15; i++) {
+            int check = (int) (3 * SIZE + Math.random() * SIZE);
+            byte result = htmPicture.recognize(negative(images[check]));
+            System.out.println("Classify image:\n" + imageToString(images[check]) + "as " + result + " when was " + labels[check]);
+        }
     }
 
     public static byte[][] createHorizontalMovie(byte[] image) {

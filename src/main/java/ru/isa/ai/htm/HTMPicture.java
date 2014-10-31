@@ -12,7 +12,7 @@ public class HTMPicture {
     public static final int DIMENSION_1 = 7;
     public static final int DIMENSION_2 = 4;
     public static final int OUTPUT_SIZE_1 = 10;
-    public static final int OUTPUT_SIZE_2 = 10;
+    public static final int OUTPUT_SIZE_2 = 5;
 
     private HTMNode[] firstLevel = new HTMNode[DIMENSION_1 * DIMENSION_1];
     private HTMNode[] secondLevel = new HTMNode[DIMENSION_2 * DIMENSION_2];
@@ -123,9 +123,11 @@ public class HTMPicture {
         return output;
     }
 
-    public byte recognize(byte[] image) {
+    public void prepare(){
         classifier.buildModel();
+    }
 
+    public byte recognize(byte[] image) {
         byte[] input = firstRecognize(image); // 10 * 7 * 7 length
         byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
         return classifier.classify(input2);

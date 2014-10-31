@@ -29,6 +29,8 @@ public class NaiveBayesClassifier {
             Map<Integer, Integer> bitMap = new HashMap<>();
             int bitCount = 0;
             for (byte[] oldPattern : entry.getValue()) {
+                if(totalBits < oldPattern.length)
+                    totalBits = oldPattern.length;
                 for (int i = 0; i < oldPattern.length; i++) {
                     if (oldPattern[i] > 0) {
                         bitCount++;
@@ -41,7 +43,6 @@ public class NaiveBayesClassifier {
             }
             bitsCount.put(entry.getKey(), bitMap);
             totalBitsCount.put(entry.getKey(), bitCount);
-            totalBits += bitCount;
         }
     }
 
