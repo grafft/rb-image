@@ -23,24 +23,26 @@ public class OnlineKMeansClusterer {
         counts = new int[k];
     }
 
-    public void updateClusterer(byte[] pattern) {
+    public int updateClusterer(byte[] pattern) {
         double distance = Double.MAX_VALUE;
         int closest = -1;
         for (int i = 0; i < k; i++) {
             double dist = getDistance(means[i], pattern);
-            if (dist < distance)
+            if (dist < distance) {
+                distance = dist;
                 closest = i;
+            }
         }
         counts[closest]++;
         for (int i = 0; i < means[closest].length; i++)
             means[closest][i] = means[closest][i] + (pattern[i] - means[closest][i]) / counts[closest];
+        return closest;
     }
 
     private double getDistance(double[] mean, byte[] pattern) {
         double distance = IntStream.range(0, mean.length)
-                .mapToDouble(item -> (mean[item] - pattern[item]) * (mean[item] - pattern[item]))
-                .reduce((i1, i2) -> i1 + i2)
-                .getAsDouble();
+                .mapToDouble(item -> (mean[item] - pattern[item]))
+                .reduce(0, (res, i2) -> res + i2 * i2);
         return Math.sqrt(distance);
     }
 

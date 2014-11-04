@@ -1,5 +1,8 @@
 package ru.isa.ai.htm;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Arrays;
 
 /**
@@ -8,20 +11,24 @@ import java.util.Arrays;
  * Time: 11:13
  */
 public class HTMPicture {
+    private static final Logger logger = LogManager.getLogger(HTMPicture.class.getSimpleName());
+
     public static final int INPUT_SIZE = 28;
     public static final int DIMENSION_1 = 7;
     public static final int DIMENSION_2 = 4;
     public static final int OUTPUT_SIZE_1 = 10;
     public static final int OUTPUT_SIZE_2 = 5;
 
-    private HTMNode[] firstLevel = new HTMNode[DIMENSION_1 * DIMENSION_1];
+    private ClusteredHTMNode[] firstLevel = new ClusteredHTMNode[DIMENSION_1 * DIMENSION_1];
     private HTMNode[] secondLevel = new HTMNode[DIMENSION_2 * DIMENSION_2];
 
     private NaiveBayesClassifier classifier = new NaiveBayesClassifier();
 
     public HTMPicture() {
+        logger.info(String.format("Initialization: %dx%d->%dx%d", DIMENSION_1, DIMENSION_1, DIMENSION_2, DIMENSION_2));
         for (int i = 0; i < DIMENSION_1 * DIMENSION_1; i++) {
-            firstLevel[i] = new ClusteredHTMNode(50, INPUT_SIZE * INPUT_SIZE / DIMENSION_1 * DIMENSION_1);
+            firstLevel[i] = new ClusteredHTMNode(50, (INPUT_SIZE * INPUT_SIZE) / (DIMENSION_1 * DIMENSION_1));
+            //firstLevel[i] = new HTMNode();
             firstLevel[i].setMaxTGNumber(OUTPUT_SIZE_1);
         }
         for (int i = 0; i < DIMENSION_2 * DIMENSION_2; i++) {
@@ -32,6 +39,7 @@ public class HTMPicture {
     }
 
     public void learnMovie1(byte[][] movie) {
+        logger.debug("Learn first level: " + movie.length);
         // learn first level
         for (byte[] aMovie : movie) {
             for (int j = 0; j < DIMENSION_1 * DIMENSION_1; j++) {
@@ -48,6 +56,7 @@ public class HTMPicture {
     }
 
     public void learnMovie2(byte[][] movie) {
+        logger.debug("Learn second level: " + movie.length);
         // learn second level
         for (byte[] aMovie : movie) {
             byte[] input = firstRecognize(aMovie);
@@ -66,6 +75,7 @@ public class HTMPicture {
     }
 
     public void learnMovie3(byte[][] movie, byte label) {
+        logger.debug("Learn top with bayes: " + movie.length);
         // learn top
         for (byte[] aMovie : movie) {
             byte[] input = firstRecognize(aMovie); // 10 * 7 * 7 length

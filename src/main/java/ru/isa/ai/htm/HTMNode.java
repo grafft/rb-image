@@ -43,7 +43,7 @@ public class HTMNode {
     }
 
 
-    private void normalize() {
+    protected void normalize() {
         for (MarkovNode node : markovNet) {
             double sumTrans = node.getConnectedNode().values().stream().reduce((result, item) -> result + item).get();
             for (MarkovNode transNode : node.getConnectedNode().keySet()) {
