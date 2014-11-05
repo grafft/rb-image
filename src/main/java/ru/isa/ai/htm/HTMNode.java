@@ -79,6 +79,34 @@ public class HTMNode {
         return result;
     }
 
+    public double[] process(double[] input) {
+        double[] result = new double[maxTGNumber];
+        Map<Integer, Double> clusterDists = new HashMap<>();
+        for (int i = 0; i < maxTGNumber; i++)
+            clusterDists.put(i, Double.MAX_VALUE);
+
+        Map<Integer, Double> nodeProbabilities = new HashMap<>();
+        for (MarkovNode node : markovNet) {
+            double prob = 1;
+            for (int i = 0; i < input.length; i++) {
+                prob *= node.getPattern()[i] > 0 ? input[i] : 1;
+            }
+            nodeProbabilities.put(node.getIndex(), prob);
+        }
+
+        for (MarkovNode node : markovNet) {
+            double prob = nodeProbabilities.get(node.getIndex());
+            if (prob < clusterDists.get(clusterer.getClusterNumbers()[node.getIndex()]))
+                clusterDists.put(clusterer.getClusterNumbers()[node.getIndex()], prob);
+        }
+
+        double sum = clusterDists.values().stream().reduce(0.0, Double::sum);
+        for (int i = 0; i < maxTGNumber; i++) {
+            result[i] = clusterDists.get(i) / sum;
+        }
+        return result;
+    }
+
     public void setMaxTGNumber(int maxTGNumber) {
         this.maxTGNumber = maxTGNumber;
     }

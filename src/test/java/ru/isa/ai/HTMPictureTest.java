@@ -12,7 +12,7 @@ import java.io.IOException;
  * Time: 11:36
  */
 public class HTMPictureTest {
-    public static final int SIZE = 100;
+    public static final int SIZE = 500;
 
     public static void main(String[] args) throws IOException {
         File testFile = new File(HTMPictureTest.class.getClassLoader().getResource("train-labels-idx1-ubyte.gz").getPath());

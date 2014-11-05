@@ -15,7 +15,7 @@ public class ClusteredHTMNode {
     public static final double SIGMA = 0.1;
 
     protected int maxTGNumber = 10;
-    private int k = 50;
+    private int k = 15;
     private OnlineKMeansClusterer inputClusterer;
     protected List<MarkovNode> clusteredNet = new ArrayList<>();
     protected ClusteredMarkovNode previous = null;
@@ -65,8 +65,8 @@ public class ClusteredHTMNode {
             clusterDists.put(i, Double.MAX_VALUE);
 
         for (MarkovNode node : clusteredNet) {
-            double distance = IntStream.range(0, node.getPattern().length)
-                    .mapToDouble(index -> node.getPattern()[index] - input[index])
+            double distance = IntStream.range(0, ((ClusteredMarkovNode)node).getFullPattern().length)
+                    .mapToDouble(index -> ((ClusteredMarkovNode)node).getFullPattern()[index] - input[index])
                     .reduce(0, (res, i) -> res + i * i);
             distance = Math.sqrt(distance);
             if (distance < clusterDists.get(clusterer.getClusterNumbers()[node.getIndex()]))

@@ -27,7 +27,7 @@ public class HTMPicture {
     public HTMPicture() {
         logger.info(String.format("Initialization: %dx%d->%dx%d", DIMENSION_1, DIMENSION_1, DIMENSION_2, DIMENSION_2));
         for (int i = 0; i < DIMENSION_1 * DIMENSION_1; i++) {
-            firstLevel[i] = new ClusteredHTMNode(50, (INPUT_SIZE * INPUT_SIZE) / (DIMENSION_1 * DIMENSION_1));
+            firstLevel[i] = new ClusteredHTMNode(15, (INPUT_SIZE * INPUT_SIZE) / (DIMENSION_1 * DIMENSION_1));
             //firstLevel[i] = new HTMNode();
             firstLevel[i].setMaxTGNumber(OUTPUT_SIZE_1);
         }
@@ -78,7 +78,7 @@ public class HTMPicture {
         logger.debug("Learn top with bayes: " + movie.length);
         // learn top
         for (byte[] aMovie : movie) {
-            byte[] input = firstRecognize(aMovie); // 10 * 7 * 7 length
+            double[] input = firstRecognizeAsDouble(aMovie); // 10 * 7 * 7 length
             byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
 
             classifier.addExample(input2, label);
@@ -111,6 +111,16 @@ public class HTMPicture {
         return output;
     }
 
+    public double[] firstRecognizeAsDouble(byte[] image) {
+        double[] output = new double[OUTPUT_SIZE_1 * DIMENSION_1 * DIMENSION_1];
+        for (int i = 0; i < DIMENSION_1 * DIMENSION_1; i++) {
+            byte[] input = firstLevelCut(image, i);
+            double[] result = firstLevel[i].process(input);
+            System.arraycopy(result, 0, output, i * 10, OUTPUT_SIZE_1);
+        }
+        return output;
+    }
+
     private byte[] secondLevelCut(byte[] input, int index) {
         int size = DIMENSION_1 / DIMENSION_2 + ((DIMENSION_1 % DIMENSION_2 == 0) ? 0 : 1);
         byte[] cutInput = new byte[size * size * OUTPUT_SIZE_1];
@@ -121,10 +131,20 @@ public class HTMPicture {
         return cutInput;
     }
 
-    private byte[] secondRecognize(byte[] input) {
+    private double[] secondLevelCut(double[] input, int index) {
+        int size = DIMENSION_1 / DIMENSION_2 + ((DIMENSION_1 % DIMENSION_2 == 0) ? 0 : 1);
+        double[] cutInput = new double[size * size * OUTPUT_SIZE_1];
+        for (int i = 0; i < size * size * OUTPUT_SIZE_1; i++) {
+            cutInput[i] = (index * size * size * OUTPUT_SIZE_1 + i < DIMENSION_1 * DIMENSION_1 * OUTPUT_SIZE_1) ?
+                    input[index * size * size * OUTPUT_SIZE_1 + i] : 0;
+        }
+        return cutInput;
+    }
+
+    private byte[] secondRecognize(double[] input) {
         byte[] output = new byte[OUTPUT_SIZE_2 * DIMENSION_2 * DIMENSION_2];
         for (int i = 0; i < DIMENSION_2 * DIMENSION_2; i++) {
-            byte[] cutInput = secondLevelCut(input, i);
+            double[] cutInput = secondLevelCut(input, i);
             double[] result = secondLevel[i].process(cutInput);
             double max = Arrays.stream(result).max().getAsDouble();
             for (int j = 0; j < OUTPUT_SIZE_2; j++) {
@@ -139,7 +159,7 @@ public class HTMPicture {
     }
 
     public byte recognize(byte[] image) {
-        byte[] input = firstRecognize(image); // 10 * 7 * 7 length
+        double[] input = firstRecognizeAsDouble(image); // 10 * 7 * 7 length
         byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
         return classifier.classify(input2);
     }
