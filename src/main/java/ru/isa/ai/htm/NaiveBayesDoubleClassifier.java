@@ -23,15 +23,16 @@ public class NaiveBayesDoubleClassifier {
         for (int i = 0; i < length; i++) {
             attributes.add(new Attribute("attr_" + i, i));
         }
-        attributes.add(new Attribute("class", length));
+        attributes.add(new Attribute("class", Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"), length));
         this.examples = new Instances("NBC", attributes, 100);
         examples.setClassIndex(length);
     }
 
     public void addExample(double[] pattern, byte clazz) {
-        Instance instance = new DenseInstance(0, pattern);
-        instance.setDataset(examples);
-        instance.setClassValue(clazz);
+        double[] values = new double[pattern.length + 1];
+        System.arraycopy(pattern, 0, values, 0, pattern.length);
+        values[pattern.length] = clazz;
+        Instance instance = new DenseInstance(0, values);
         examples.add(instance);
     }
 
@@ -47,6 +48,7 @@ public class NaiveBayesDoubleClassifier {
         byte result = -1;
         try {
             Instance instance = new DenseInstance(0, pattern);
+            instance.setDataset(examples);
             double[] distribution = nbc.distributionForInstance(instance);
             result = (byte) nbc.classifyInstance(instance);
             System.out.println(Arrays.toString(distribution));
