@@ -22,7 +22,7 @@ public class HTMPicture {
     private ClusteredHTMNode[] firstLevel = new ClusteredHTMNode[DIMENSION_1 * DIMENSION_1];
     private HTMNode[] secondLevel = new HTMNode[DIMENSION_2 * DIMENSION_2];
 
-    private NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+    private NaiveBayesDoubleClassifier classifier = new NaiveBayesDoubleClassifier(OUTPUT_SIZE_2 * DIMENSION_2 * DIMENSION_2);
 
     public HTMPicture() {
         logger.info(String.format("Initialization: %dx%d->%dx%d", DIMENSION_1, DIMENSION_1, DIMENSION_2, DIMENSION_2));
@@ -79,7 +79,7 @@ public class HTMPicture {
         // learn top
         for (byte[] aMovie : movie) {
             double[] input = firstRecognizeAsDouble(aMovie); // 10 * 7 * 7 length
-            byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
+            double[] input2 = secondRecognizeAsDouble(input); // 10 * 4 * 4 length
 
             classifier.addExample(input2, label);
         }
@@ -141,15 +141,12 @@ public class HTMPicture {
         return cutInput;
     }
 
-    private byte[] secondRecognize(double[] input) {
-        byte[] output = new byte[OUTPUT_SIZE_2 * DIMENSION_2 * DIMENSION_2];
+    private double[] secondRecognizeAsDouble(double[] input) {
+        double[] output = new double[OUTPUT_SIZE_2 * DIMENSION_2 * DIMENSION_2];
         for (int i = 0; i < DIMENSION_2 * DIMENSION_2; i++) {
             double[] cutInput = secondLevelCut(input, i);
             double[] result = secondLevel[i].process(cutInput);
-            double max = Arrays.stream(result).max().getAsDouble();
-            for (int j = 0; j < OUTPUT_SIZE_2; j++) {
-                output[i * OUTPUT_SIZE_2 + j] = (byte) (result[j] < max ? 0 : 1);
-            }
+            System.arraycopy(result, 0, output, i * 5, OUTPUT_SIZE_2);
         }
         return output;
     }
@@ -160,7 +157,7 @@ public class HTMPicture {
 
     public byte recognize(byte[] image) {
         double[] input = firstRecognizeAsDouble(image); // 10 * 7 * 7 length
-        byte[] input2 = secondRecognize(input); // 10 * 4 * 4 length
+        double[] input2 = secondRecognizeAsDouble(input); // 10 * 4 * 4 length
         return classifier.classify(input2);
     }
 }
