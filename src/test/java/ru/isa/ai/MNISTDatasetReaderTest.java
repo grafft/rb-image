@@ -1,6 +1,6 @@
 package ru.isa.ai;
 
-import ru.isa.ai.htm.MNISTDatasetReader;
+import ru.isa.ai.utils.MNISTDatasetReader;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

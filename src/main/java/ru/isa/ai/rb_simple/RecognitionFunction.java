@@ -1,4 +1,4 @@
-package ru.isa.ai.rb;
+package ru.isa.ai.rb_simple;
 
 import cern.colt.matrix.tbit.BitMatrix;
 

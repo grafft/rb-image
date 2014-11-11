@@ -1,4 +1,4 @@
-package ru.isa.ai.htm;
+package ru.isa.ai.utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

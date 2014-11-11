@@ -1,4 +1,6 @@
-package ru.isa.ai.htm;
+package ru.isa.ai.clusterers;
+
+import ru.isa.ai.clusterers.MarkovNode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,18 +8,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-/**
+/** Agglomerative Hierarchical Clusterer
  * Author: Aleksandr Panov
  * Date: 29.10.2014
  * Time: 12:47
  */
-public class AgglomerativeHierarchicalClusterer {
+public class MarkovNetClusterer {
 
     private List<MarkovNode> markovNet = new ArrayList<>();
     private int[] clusterNumbers;
     private int maxCLusterNumber;
 
-    public AgglomerativeHierarchicalClusterer(List<MarkovNode> markovNet, int maxCLusterNumber) {
+    public MarkovNetClusterer(List<MarkovNode> markovNet, int maxCLusterNumber) {
         this.markovNet = markovNet;
         this.maxCLusterNumber = maxCLusterNumber;
     }

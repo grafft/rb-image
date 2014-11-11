@@ -1,18 +1,19 @@
-package ru.isa.ai.htm;
+package ru.isa.ai.clusterers;
 
 import java.util.stream.IntStream;
 
 /**
+ * Online K-Means Clusterer
  * Author: Aleksandr Panov
  * Date: 31.10.2014
  * Time: 17:40
  */
-public class OnlineKMeansClusterer {
+public class PatternClusterer {
     private int k;
     private double[][] means;
     private int[] counts;
 
-    public OnlineKMeansClusterer(int k, int dimension) {
+    public PatternClusterer(int k, int dimension) {
         this.k = k;
         means = new double[k][dimension];
         for (int i = 0; i < k; i++) {
@@ -23,7 +24,7 @@ public class OnlineKMeansClusterer {
         counts = new int[k];
     }
 
-    public int updateClusterer(byte[] pattern) {
+    public int updateClusterer(double[] pattern) {
         double distance = Double.MAX_VALUE;
         int closest = -1;
         for (int i = 0; i < k; i++) {
@@ -39,7 +40,7 @@ public class OnlineKMeansClusterer {
         return closest;
     }
 
-    private double getDistance(double[] mean, byte[] pattern) {
+    private double getDistance(double[] mean, double[] pattern) {
         double distance = IntStream.range(0, mean.length)
                 .mapToDouble(item -> (mean[item] - pattern[item]))
                 .reduce(0, (res, i2) -> res + i2 * i2);

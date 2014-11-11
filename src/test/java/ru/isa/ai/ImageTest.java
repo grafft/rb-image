@@ -3,7 +3,7 @@ package ru.isa.ai;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import ru.isa.ai.rb.RBHierarchy;
+import ru.isa.ai.rb_simple.RBHierarchy;
 
 /**
  * Unit test for simple App.

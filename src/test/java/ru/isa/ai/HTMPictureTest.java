@@ -1,7 +1,7 @@
 package ru.isa.ai;
 
-import ru.isa.ai.htm.HTMPicture;
-import ru.isa.ai.htm.MNISTDatasetReader;
+import ru.isa.ai.htm.HTMNetwork;
+import ru.isa.ai.utils.MNISTDatasetReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.io.IOException;
  * Time: 11:36
  */
 public class HTMPictureTest {
-    public static final int SIZE = 100;
+    public static final int SIZE = 500;
 
     public static void main(String[] args) throws IOException {
         File testFile = new File(HTMPictureTest.class.getClassLoader().getResource("train-labels-idx1-ubyte.gz").getPath());
@@ -21,21 +21,21 @@ public class HTMPictureTest {
         byte[][] images = reader.readData();
         byte[] labels = reader.getLabels();
 
-        HTMPicture htmPicture = new HTMPicture();
+        HTMNetwork htmPicture = new HTMNetwork();
         for (int i = 0; i < SIZE; i++) {
-            htmPicture.learnMovie1(createHorizontalMovie(images[i]));
-            htmPicture.learnMovie1(createVerticalMovie(images[i]));
+            htmPicture.learnLevel(0, createHorizontalMovie(images[i]));
+            htmPicture.learnLevel(0,createVerticalMovie(images[i]));
         }
-        htmPicture.normalize1();
+        htmPicture.finalizeLevelLearning(0);
         for (int i = SIZE; i < 2 * SIZE; i++) {
-            htmPicture.learnMovie2(createHorizontalMovie(images[i]));
-            htmPicture.learnMovie2(createVerticalMovie(images[i]));
+            htmPicture.learnLevel(1, createHorizontalMovie(images[i]));
+            htmPicture.learnLevel(1, createVerticalMovie(images[i]));
         }
-        htmPicture.normalize2();
+        htmPicture.finalizeLevelLearning(1);
 
         for (int i = 2 * SIZE; i < 3 * SIZE; i++) {
-            htmPicture.learnMovie3(createHorizontalMovie(images[i]), labels[i]);
-            htmPicture.learnMovie3(createVerticalMovie(images[i]), labels[i]);
+            htmPicture.learningAll(createHorizontalMovie(images[i]), labels[i]);
+            htmPicture.learningAll(createVerticalMovie(images[i]), labels[i]);
         }
 
         htmPicture.prepare();

@@ -1,4 +1,4 @@
-package ru.isa.ai.htm;
+package ru.isa.ai.classifiers;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * Date: 29.10.2014
  * Time: 12:57
  */
-public class NaiveBayesClassifier {
+public class NaiveBayesByteClassifier {
     private Map<Byte, List<byte[]>> examples = new HashMap<>();
     private Map<Byte, Integer> patternCount = new HashMap<>();
     private Map<Byte, Map<Integer, Integer>> bitsCount = new HashMap<>();

@@ -1,4 +1,4 @@
-package ru.isa.ai.htm;
+package ru.isa.ai.classifiers;
 
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;
@@ -9,16 +9,16 @@ import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
+/** Weka Naive Bayes
  * Author: Aleksandr Panov
  * Date: 29.10.2014
  * Time: 12:57
  */
-public class NaiveBayesDoubleClassifier {
+public class TopPatternClassifier {
     private Instances examples;
     private NaiveBayes nbc = new NaiveBayes();
 
-    public NaiveBayesDoubleClassifier(int length) {
+    public TopPatternClassifier(int length) {
         ArrayList<Attribute> attributes = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             attributes.add(new Attribute("attr_" + i, i));
@@ -32,7 +32,7 @@ public class NaiveBayesDoubleClassifier {
         double[] values = new double[pattern.length + 1];
         System.arraycopy(pattern, 0, values, 0, pattern.length);
         values[pattern.length] = clazz;
-        Instance instance = new DenseInstance(0, values);
+        Instance instance = new DenseInstance(1, values);
         examples.add(instance);
     }
 
@@ -47,7 +47,7 @@ public class NaiveBayesDoubleClassifier {
     public byte classify(double[] pattern) {
         byte result = -1;
         try {
-            Instance instance = new DenseInstance(0, pattern);
+            Instance instance = new DenseInstance(1, pattern);
             instance.setDataset(examples);
             double[] distribution = nbc.distributionForInstance(instance);
             result = (byte) nbc.classifyInstance(instance);
