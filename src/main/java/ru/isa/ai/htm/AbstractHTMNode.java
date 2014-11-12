@@ -22,6 +22,10 @@ public abstract class AbstractHTMNode {
     protected MarkovNode previous = null;
     protected MarkovNetClusterer clusterer;
 
+    protected AbstractHTMNode(int maxTGNumber) {
+        this.maxTGNumber = maxTGNumber;
+    }
+
     public void learn(double[] input) {
         double[] processed = preProcessInput(input);
         MarkovNode current = getCorrespondingNode(processed);
@@ -44,7 +48,7 @@ public abstract class AbstractHTMNode {
 
     protected void normalizeMarkovNet() {
         for (MarkovNode node : markovNet) {
-            double sumTrans = node.getConnectedNode().values().stream().reduce((result, item) -> result + item).get();
+            double sumTrans = node.getConnectedNode().values().stream().reduce(0.0, (result, item) -> result + item);
             for (MarkovNode transNode : node.getConnectedNode().keySet()) {
                 node.getConnectedNode().put(transNode, node.getConnectedNode().get(transNode) / sumTrans);
             }
@@ -80,7 +84,4 @@ public abstract class AbstractHTMNode {
 
     protected abstract double getNodeDistance(MarkovNode node, double[] pattern);
 
-    public void setMaxTGNumber(int maxTGNumber) {
-        this.maxTGNumber = maxTGNumber;
-    }
 }

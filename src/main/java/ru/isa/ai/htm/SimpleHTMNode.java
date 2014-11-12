@@ -13,6 +13,10 @@ import java.util.stream.IntStream;
  */
 public class SimpleHTMNode extends AbstractHTMNode {
 
+    protected SimpleHTMNode(int maxTGNumber) {
+        super(maxTGNumber);
+    }
+
     @Override
     protected MarkovNode getCorrespondingNode(double[] pattern) {
         int found = IntStream.range(0, markovNet.size())

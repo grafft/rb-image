@@ -4,8 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.isa.ai.classifiers.TopPatternClassifier;
 
-import java.util.stream.IntStream;
-
 /**
  * Author: Aleksandr Panov
  * Date: 23.10.2014
@@ -30,20 +28,17 @@ public class HTMNetwork {
         logger.info(String.format("Initialization: %d levels", levels.length));
         for (int i = 0; i < levels.length; i++) {
             for (int j = 0; j < levels[i].length; j++) {
-                levels[i][j] = i > 0 ? new SimpleHTMNode() :
-                        new ClusteredHTMNode(15, outputCounts[i] / (xNodeCounts[i] * yNodeCounts[i]));
+                levels[i][j] = i > 0 ? new SimpleHTMNode(5) :
+                        new ClusteredHTMNode(15, outputCounts[i] / (xNodeCounts[i] * yNodeCounts[i]), 10);
             }
         }
     }
 
-    public void learnLevel(int level, byte[][] movie) {
-        logger.debug(String.format("Learn %d level with %d inputs", level, movie.length));
-        for (byte[] aMovie : movie) {
-            double[] processedInput = IntStream.range(0, aMovie.length)
-                    .mapToDouble(index -> (double) (aMovie[index]))
-                    .toArray();
+    public void learnLevel(int level, double[][] movie) {
+        for (double[] aMovie : movie) {
+            double[] processedInput = aMovie;
             for (int i = 0; i < level; i++) {
-                processedInput = processLevel(level, processedInput);
+                processedInput = processLevel(i, processedInput);
             }
             for (int j = 0; j < xNodeCounts[level] * yNodeCounts[level]; j++) {
                 double[] input = cutInputForLevel(level, j, processedInput);
@@ -84,13 +79,9 @@ public class HTMNetwork {
         return output;
     }
 
-    public void learningAll(byte[][] movie, byte label) {
-        logger.debug("Learn top with bayes: " + movie.length);
-        // learn top
-        for (byte[] aMovie : movie) {
-            double[] processedInput = IntStream.range(0, aMovie.length)
-                    .mapToDouble(index -> (double) (aMovie[index]))
-                    .toArray();
+    public void learningAll(double[][] movie, byte label) {
+        for (double[] aMovie : movie) {
+            double[] processedInput = aMovie;
             for (int i = 0; i < levels.length; i++) {
                 processedInput = processLevel(i, processedInput);
             }
@@ -103,10 +94,8 @@ public class HTMNetwork {
         classifier.buildModel();
     }
 
-    public byte recognize(byte[] image) {
-        double[] processedInput = IntStream.range(0, image.length)
-                .mapToDouble(index -> (double) (image[index]))
-                .toArray();
+    public byte recognize(double[] image) {
+        double[] processedInput = image;
         for (int i = 0; i < levels.length; i++) {
             processedInput = processLevel(i, processedInput);
         }

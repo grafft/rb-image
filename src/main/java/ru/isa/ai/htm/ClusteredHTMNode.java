@@ -15,7 +15,8 @@ public class ClusteredHTMNode extends AbstractHTMNode {
     private int patternsAmount;
     private PatternClusterer inputClusterer;
 
-    public ClusteredHTMNode(int k, int dimension) {
+    public ClusteredHTMNode(int k, int dimension, int maxTGNumber) {
+        super(maxTGNumber);
         this.patternsAmount = k;
         inputClusterer = new PatternClusterer(k, dimension);
         for (int i = 0; i < k; i++) {
