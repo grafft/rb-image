@@ -15,21 +15,24 @@ public class HTMNetwork {
     private int[] xNodeCounts = new int[]{7, 4};
     private int[] yNodeCounts = new int[]{7, 4};
 
-    private int[] outputCounts = new int[]{28 * 28, xNodeCounts[0] * xNodeCounts[0] * 10, xNodeCounts[1] * xNodeCounts[1] * 5};
+    private int[] nodeOutputCounts = new int[]{10, 5};
+
+    private int[] inputCounts = new int[]{28 * 28, xNodeCounts[0] * yNodeCounts[0] * nodeOutputCounts[0],
+            xNodeCounts[1] * yNodeCounts[1] * nodeOutputCounts[1]};
 
     private AbstractHTMNode[][] levels = new AbstractHTMNode[][]{
             new AbstractHTMNode[xNodeCounts[0] * yNodeCounts[0]],
             new AbstractHTMNode[xNodeCounts[1] * yNodeCounts[1]]
     };
 
-    private TopPatternClassifier classifier = new TopPatternClassifier(outputCounts[2]);
+    private TopPatternClassifier classifier = new TopPatternClassifier(xNodeCounts[1] * yNodeCounts[1] * nodeOutputCounts[1]);
 
     public HTMNetwork() {
         logger.info(String.format("Initialization: %d levels", levels.length));
         for (int i = 0; i < levels.length; i++) {
             for (int j = 0; j < levels[i].length; j++) {
-                levels[i][j] = i > 0 ? new SimpleHTMNode(5) :
-                        new ClusteredHTMNode(15, outputCounts[i] / (xNodeCounts[i] * yNodeCounts[i]), 10);
+                levels[i][j] = i == 0 ? new ClusteredHTMNode(15, inputCounts[i] / (xNodeCounts[0] * yNodeCounts[0]), nodeOutputCounts[0]) :
+                        new SimpleHTMNode(nodeOutputCounts[i]);
             }
         }
     }
@@ -54,8 +57,8 @@ public class HTMNetwork {
     }
 
     public double[] cutInputForLevel(int level, int index, double[] input) {
-        int xSize = (int) Math.round(Math.sqrt(outputCounts[level]) / xNodeCounts[level]);
-        int ySize = (int) Math.round(Math.sqrt(outputCounts[level]) / yNodeCounts[level]);
+        int xSize = (int) Math.round(Math.sqrt(inputCounts[level]) / xNodeCounts[level]);
+        int ySize = (int) Math.round(Math.sqrt(inputCounts[level]) / yNodeCounts[level]);
 
         int startY = index / xNodeCounts[level];
         int startX = index % xNodeCounts[level];
@@ -70,7 +73,7 @@ public class HTMNetwork {
     }
 
     public double[] processLevel(int level, double[] input) {
-        double[] output = new double[outputCounts[level + 1]];
+        double[] output = new double[inputCounts[level + 1]];
         for (int i = 0; i < xNodeCounts[level] * yNodeCounts[level]; i++) {
             double[] cutInput = cutInputForLevel(level, i, input);
             double[] result = levels[level][i].process(cutInput);
