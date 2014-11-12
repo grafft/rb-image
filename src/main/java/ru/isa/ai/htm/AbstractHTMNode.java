@@ -23,7 +23,8 @@ public abstract class AbstractHTMNode {
     protected MarkovNetClusterer clusterer;
 
     public void learn(double[] input) {
-        MarkovNode current = getCorrespondingNode(input);
+        double[] processed = preProcessInput(input);
+        MarkovNode current = getCorrespondingNode(processed);
 
         if (previous != null) {
             if (!previous.getConnectedNode().containsKey(current))
@@ -70,6 +71,8 @@ public abstract class AbstractHTMNode {
         }
         return result;
     }
+
+    protected abstract double[] preProcessInput(double[] input);
 
     protected abstract void normalizeClusterDistances(Map<Integer, Double> clusterDists);
 

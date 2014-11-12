@@ -46,6 +46,11 @@ public class ClusteredHTMNode extends AbstractHTMNode {
     }
 
     @Override
+    protected double[] preProcessInput(double[] input) {
+        return input;
+    }
+
+    @Override
     protected void normalizeClusterDistances(Map<Integer, Double> clusterDists) {
         for (int i = 0; i < maxTGNumber; i++) {
             double dist = clusterDists.get(i);

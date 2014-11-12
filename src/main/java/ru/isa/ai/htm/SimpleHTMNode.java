@@ -35,6 +35,12 @@ public class SimpleHTMNode extends AbstractHTMNode {
     }
 
     @Override
+    protected double[] preProcessInput(double[] input) {
+        double max = Arrays.stream(input).max().getAsDouble();
+        return IntStream.range(0, input.length).mapToDouble(index -> input[index] < max ? 0.0 : 1.0).toArray();
+    }
+
+    @Override
     protected void normalizeClusterDistances(Map<Integer, Double> clusterDists) {
 
     }

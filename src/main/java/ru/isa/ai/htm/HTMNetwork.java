@@ -30,8 +30,8 @@ public class HTMNetwork {
         logger.info(String.format("Initialization: %d levels", levels.length));
         for (int i = 0; i < levels.length; i++) {
             for (int j = 0; j < levels[i].length; j++) {
-                levels[i][j] = i > 0 ? new SimpleHTMNode() : new ClusteredHTMNode(15,
-                        outputCounts[i] / (xNodeCounts[i] * yNodeCounts[i]));
+                levels[i][j] = i > 0 ? new SimpleHTMNode() :
+                        new ClusteredHTMNode(15, outputCounts[i] / (xNodeCounts[i] * yNodeCounts[i]));
             }
         }
     }
