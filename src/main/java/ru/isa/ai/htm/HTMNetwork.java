@@ -15,7 +15,7 @@ public class HTMNetwork {
     private int[] xNodeCounts = new int[]{7, 4};
     private int[] yNodeCounts = new int[]{7, 4};
 
-    private int[] nodeOutputCounts = new int[]{10, 5};
+    private int[] nodeOutputCounts = new int[]{9, 4};
 
     private int[] inputCounts = new int[]{28 * 28, xNodeCounts[0] * yNodeCounts[0] * nodeOutputCounts[0],
             xNodeCounts[1] * yNodeCounts[1] * nodeOutputCounts[1]};
@@ -57,8 +57,9 @@ public class HTMNetwork {
     }
 
     public double[] cutInputForLevel(int level, int index, double[] input) {
-        int xSize = (int) Math.round(Math.sqrt(inputCounts[level]) / xNodeCounts[level]);
-        int ySize = (int) Math.round(Math.sqrt(inputCounts[level]) / yNodeCounts[level]);
+        int side = (int) Math.round(Math.sqrt(inputCounts[level]));
+        int xSize = side / xNodeCounts[level];
+        int ySize = side / yNodeCounts[level];
 
         int startY = index / xNodeCounts[level];
         int startX = index % xNodeCounts[level];
@@ -66,7 +67,7 @@ public class HTMNetwork {
         double[] cutInput = new double[xSize * ySize];
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
-                cutInput[i * xSize + j] = input[(startY + i) * xSize * ySize + startX + j];
+                cutInput[i * xSize + j] = input[(startY * ySize + i) * side + startX * xSize + j];
             }
         }
         return cutInput;

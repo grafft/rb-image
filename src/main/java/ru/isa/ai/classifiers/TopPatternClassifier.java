@@ -1,5 +1,7 @@
 package ru.isa.ai.classifiers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -9,12 +11,14 @@ import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/** Weka Naive Bayes
+/**
+ * Weka Naive Bayes
  * Author: Aleksandr Panov
  * Date: 29.10.2014
  * Time: 12:57
  */
 public class TopPatternClassifier {
+    private static final Logger logger = LogManager.getLogger(TopPatternClassifier.class.getSimpleName());
     private Instances examples;
     private NaiveBayes nbc = new NaiveBayes();
 
@@ -50,8 +54,18 @@ public class TopPatternClassifier {
             Instance instance = new DenseInstance(1, pattern);
             instance.setDataset(examples);
             double[] distribution = nbc.distributionForInstance(instance);
-            result = (byte) nbc.classifyInstance(instance);
-            System.out.println(Arrays.toString(distribution));
+
+            double max = -1;
+            for (int i = 0; i < distribution.length; i++) {
+                if (max < distribution[i]) {
+                    max = distribution[i];
+                    result = (byte) i;
+                }
+            }
+            StringBuilder sb = new StringBuilder("Distribution: ");
+            for (int i = 0; i < distribution.length; i++)
+                sb.append(String.format("%d:%3.2f ", i, distribution[i]));
+            logger.info(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

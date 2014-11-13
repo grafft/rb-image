@@ -16,7 +16,7 @@ import java.io.IOException;
 public class HTMPictureTest {
     private static final Logger logger = LogManager.getLogger(HTMPictureTest.class.getSimpleName());
 
-    public static final int SIZE = 500;
+    public static final int SIZE = 1000;
 
     public static void main(String[] args) throws IOException {
         File testFile = new File(HTMPictureTest.class.getClassLoader().getResource("train-labels-idx1-ubyte.gz").getPath());
