@@ -25,6 +25,11 @@ public class ClusteredHTMNode extends AbstractHTMNode {
     }
 
     @Override
+    protected double[] preProcessInput(double[] input) {
+        return input;
+    }
+
+    @Override
     protected MarkovNode getCorrespondingNode(double[] pattern) {
         int found = inputClusterer.updateClusterer(pattern);
         return markovNet.get(found);
@@ -47,16 +52,12 @@ public class ClusteredHTMNode extends AbstractHTMNode {
     }
 
     @Override
-    protected double[] preProcessInput(double[] input) {
-        return input;
-    }
-
-    @Override
-    protected void normalizeClusterDistances(Map<Integer, Double> clusterDists) {
-        for (int i = 0; i < maxTGNumber; i++) {
+    protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {
+        for (int i = 0; i < clusterDists.size(); i++) {
             double dist = clusterDists.get(i);
             double newDist = Math.exp(-dist * dist / SIGMA);
             clusterDists.put(i, newDist);
         }
+        return super.normalizeClusterDistances(clusterDists);
     }
 }

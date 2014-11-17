@@ -119,7 +119,7 @@ public class MNISTDatasetReaderTest {
             double cellHeight = size.getHeight() / imageSize;
             for (int i = 0; i < imageSize; i++) {
                 for (int j = 0; j < imageSize; j++) {
-                    int gray = (0xFF & images[currentItem][i * (int) imageSize + j]) > 128 ? 0 : 255;
+                    int gray = 255 - (0xFF & images[currentItem][i * (int) imageSize + j]);
                     g2.setPaint(new Color(gray, gray, gray));
                     g2.fill(new Rectangle2D.Double(j * cellWidth, i * cellHeight, cellWidth, cellHeight));
                 }

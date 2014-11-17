@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 17:11
  */
 public abstract class AbstractHTMNode {
-    public static final double SIGMA = 0.1;
+    public static final double SIGMA = 300 * 300;
 
     protected int maxTGNumber = 10;
 
@@ -56,7 +56,6 @@ public abstract class AbstractHTMNode {
     }
 
     public double[] process(double[] input) {
-        double[] result = new double[maxTGNumber];
         Map<Integer, Double> clusterDists = new HashMap<>();
         for (int i = 0; i < maxTGNumber; i++)
             clusterDists.put(i, Double.MAX_VALUE);
@@ -67,8 +66,11 @@ public abstract class AbstractHTMNode {
                 clusterDists.put(clusterer.getClusterNumbers()[node.getIndex()], distance);
         }
 
-        normalizeClusterDistances(clusterDists);
+        return normalizeClusterDistances(clusterDists);
+    }
 
+    protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {
+        double[] result = new double[clusterDists.size()];
         double sum = clusterDists.values().stream().reduce(0.0, Double::sum);
         for (int i = 0; i < maxTGNumber; i++) {
             result[i] = clusterDists.get(i) / sum;
@@ -77,8 +79,6 @@ public abstract class AbstractHTMNode {
     }
 
     protected abstract double[] preProcessInput(double[] input);
-
-    protected abstract void normalizeClusterDistances(Map<Integer, Double> clusterDists);
 
     protected abstract MarkovNode getCorrespondingNode(double[] pattern);
 

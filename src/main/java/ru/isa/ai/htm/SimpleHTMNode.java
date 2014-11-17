@@ -3,7 +3,6 @@ package ru.isa.ai.htm;
 import ru.isa.ai.clusterers.MarkovNode;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -15,6 +14,12 @@ public class SimpleHTMNode extends AbstractHTMNode {
 
     protected SimpleHTMNode(int maxTGNumber) {
         super(maxTGNumber);
+    }
+
+    @Override
+    protected double[] preProcessInput(double[] input) {
+        double max = Arrays.stream(input).max().getAsDouble();
+        return IntStream.range(0, input.length).mapToDouble(index -> input[index] < max ? 0.0 : 1.0).toArray();
     }
 
     @Override
@@ -36,17 +41,6 @@ public class SimpleHTMNode extends AbstractHTMNode {
             prob *= node.getPattern()[i] > 0 ? pattern[i] : 1;
         }
         return prob;
-    }
-
-    @Override
-    protected double[] preProcessInput(double[] input) {
-        double max = Arrays.stream(input).max().getAsDouble();
-        return IntStream.range(0, input.length).mapToDouble(index -> input[index] < max ? 0.0 : 1.0).toArray();
-    }
-
-    @Override
-    protected void normalizeClusterDistances(Map<Integer, Double> clusterDists) {
-
     }
 
 }
