@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 
 /**
@@ -20,8 +21,6 @@ import java.net.URL;
  * Time: 14:13
  */
 public class HTMPictureFrameTest {
-    private static final int LEARN_AMOUNT = 1000;
-    private static final int TEST_AMOUNT = 1000;
     private static final int LEVEL_AMOUNT = 3;
 
     private static int currentItem = 0;
@@ -94,6 +93,13 @@ public class HTMPictureFrameTest {
             final JLabel imageIndexLabel = new JLabel("" + currentItem);
             final ImagePreviewPanel imagePanel = new ImagePreviewPanel();
             final JButton startMovieButton = new JButton("Show movie");
+            final JTextField learnAmountField = new JTextField("10000");
+            learnAmountField.setInputVerifier(new NumberVerifier());
+            learnAmountField.setToolTipText("Learn amount");
+            final JTextField testAmountField = new JTextField("10000");
+            testAmountField.setInputVerifier(new NumberVerifier());
+            testAmountField.setToolTipText("Test amount");
+
             final JButton totalLearnButton = new JButton("Total learning");
             final JButton startLearnButton = new JButton("Start learning");
             final JLabel learningLevelLabel = new JLabel("" + currentLevel);
@@ -150,15 +156,30 @@ public class HTMPictureFrameTest {
             add(startMovieButton, c);
 
             c.weightx = 0.5;
-            c.gridwidth = 1;
             c.gridx = 0;
             c.gridy = 2;
+            c.gridwidth = 2;
+            c.anchor = GridBagConstraints.CENTER;
+            add(learnAmountField, c);
+
+            c.weightx = 0.5;
+            c.gridx = 2;
+            c.gridy = 2;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            add(testAmountField, c);
+
+            c.weightx = 0.5;
+            c.gridwidth = 1;
+            c.gridx = 0;
+            c.gridy = 3;
             totalLearnButton.addActionListener(e -> {
                 new Thread(() -> {
                     ((JButton) e.getSource()).setEnabled(false);
                     startLearnButton.setEnabled(false);
+                    int amount = Integer.parseInt(learnAmountField.getText());
                     for (int i = 0; i < LEVEL_AMOUNT - 1; i++) {
-                        while (currentItem < (currentLevel + 1) * LEARN_AMOUNT) {
+                        while (currentItem < (currentLevel + 1) * amount) {
                             htmPicture.learnLevel(i, MovieUtils.createHorizontalMovieFull(images[currentItem]));
                             htmPicture.learnLevel(i, MovieUtils.createVerticalMovieFull(images[currentItem]));
 
@@ -171,7 +192,7 @@ public class HTMPictureFrameTest {
                         currentLevel++;
                         learningLevelLabel.setText("" + currentLevel);
                     }
-                    while (currentItem < (currentLevel + 1) * LEARN_AMOUNT) {
+                    while (currentItem < (currentLevel + 1) * amount) {
                         htmPicture.learningAll(MovieUtils.createHorizontalMovieFull(images[currentItem]), labels[currentItem]);
                         htmPicture.learningAll(MovieUtils.createVerticalMovieFull(images[currentItem]), labels[currentItem]);
 
@@ -190,11 +211,12 @@ public class HTMPictureFrameTest {
             c.weightx = 0.5;
             c.gridwidth = 1;
             c.gridx = 1;
-            c.gridy = 2;
+            c.gridy = 3;
             startLearnButton.addActionListener(e -> {
                 new Thread(() -> {
                     ((JButton) e.getSource()).setEnabled(false);
-                    while (currentItem < (currentLevel + 1) * LEARN_AMOUNT) {
+                    int amount = Integer.parseInt(learnAmountField.getText());
+                    while (currentItem < (currentLevel + 1) * amount) {
                         currentImage = MovieUtils.toDouble(images[currentItem]);
                         imagePanel.repaint();
                         if (currentLevel < LEVEL_AMOUNT - 1) {
@@ -225,14 +247,14 @@ public class HTMPictureFrameTest {
             c.weightx = 0.5;
             c.gridwidth = 1;
             c.gridx = 2;
-            c.gridy = 2;
+            c.gridy = 3;
             c.anchor = GridBagConstraints.CENTER;
             add(learningLevelLabel, c);
 
             c.weightx = 0.5;
             c.gridwidth = 2;
             c.gridx = 0;
-            c.gridy = 3;
+            c.gridy = 4;
             startRecognitionButton.addActionListener(e -> {
                 byte result = htmPicture.recognize(MovieUtils.toDouble(images[currentItem]));
                 recognitionLabel.setText("" + result);
@@ -243,20 +265,21 @@ public class HTMPictureFrameTest {
             c.weightx = 0.5;
             c.gridwidth = 1;
             c.gridx = 2;
-            c.gridy = 3;
+            c.gridy = 4;
             c.anchor = GridBagConstraints.CENTER;
             add(recognitionLabel, c);
 
             c.weightx = 0.5;
             c.gridwidth = 2;
             c.gridx = 0;
-            c.gridy = 4;
+            c.gridy = 5;
             getStatisticButton.addActionListener(e -> {
                 ((JButton) e.getSource()).setEnabled(false);
+                int amount = Integer.parseInt(testAmountField.getText());
                 new Thread(() -> {
                     int counter = 0;
                     double correct = 0;
-                    while (counter < TEST_AMOUNT) {
+                    while (counter < amount) {
                         currentImage = MovieUtils.toDouble(images[currentItem]);
                         imagePanel.repaint();
                         byte result = htmPicture.recognize(MovieUtils.toDouble(images[currentItem]));
@@ -272,7 +295,7 @@ public class HTMPictureFrameTest {
                         counter++;
                     }
                     ((JButton) e.getSource()).setEnabled(true);
-                    statisticLabel.setText(String.format("%3.2f", correct / TEST_AMOUNT));
+                    statisticLabel.setText(String.format("%3.2f", correct / amount));
                 }).start();
             });
             add(getStatisticButton, c);
@@ -280,7 +303,7 @@ public class HTMPictureFrameTest {
             c.weightx = 0.5;
             c.gridwidth = 1;
             c.gridx = 2;
-            c.gridy = 4;
+            c.gridy = 5;
             c.anchor = GridBagConstraints.CENTER;
             add(statisticLabel, c);
 
@@ -288,7 +311,7 @@ public class HTMPictureFrameTest {
             c.ipady = 200;
             c.gridx = 0;
             c.gridwidth = 3;
-            c.gridy = 5;
+            c.gridy = 6;
             add(imagePanel, c);
         }
     }
@@ -315,6 +338,20 @@ public class HTMPictureFrameTest {
                     g2.setPaint(new Color(gray, gray, gray));
                     g2.fill(new Rectangle2D.Double(j * cellWidth, i * cellHeight, cellWidth, cellHeight));
                 }
+            }
+        }
+    }
+
+    private static class NumberVerifier extends InputVerifier {
+
+        @Override
+        public boolean verify(JComponent input) {
+            String text = ((JTextField) input).getText();
+            try {
+                int value = Integer.parseInt(text);
+                return (value < images.length / 4);
+            } catch (NumberFormatException e) {
+                return false;
             }
         }
     }
