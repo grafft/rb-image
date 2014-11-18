@@ -53,11 +53,11 @@ public class ClusteredHTMNode extends AbstractHTMNode {
 
     @Override
     protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {
-        for (int i = 0; i < clusterDists.size(); i++) {
-            double dist = clusterDists.get(i);
-            double newDist = Math.exp(-dist * dist / SIGMA);
-            clusterDists.put(i, newDist);
-        }
+//        for (int i = 0; i < clusterDists.size(); i++) {
+//            double dist = clusterDists.get(i);
+//            double newDist = Math.exp(-dist * dist / SIGMA);
+//            clusterDists.put(i, newDist);
+//        }
         return super.normalizeClusterDistances(clusterDists);
     }
 }

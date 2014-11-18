@@ -20,7 +20,7 @@ import java.net.URL;
  * Time: 14:13
  */
 public class HTMPictureFrameTest {
-    private static final int LEARN_AMOUNT = 500;
+    private static final int LEARN_AMOUNT = 1000;
     private static final int TEST_AMOUNT = 1000;
     private static final int LEVEL_AMOUNT = 3;
 
@@ -94,6 +94,7 @@ public class HTMPictureFrameTest {
             final JLabel imageIndexLabel = new JLabel("" + currentItem);
             final ImagePreviewPanel imagePanel = new ImagePreviewPanel();
             final JButton startMovieButton = new JButton("Show movie");
+            final JButton totalLearnButton = new JButton("Total learning");
             final JButton startLearnButton = new JButton("Start learning");
             final JLabel learningLevelLabel = new JLabel("" + currentLevel);
             final JButton startRecognitionButton = new JButton("Recognize");
@@ -105,6 +106,7 @@ public class HTMPictureFrameTest {
 
             c.weightx = 0.5;
             c.gridx = 0;
+            c.gridwidth = 2;
             c.gridy = 0;
             nextMovieButton.addActionListener(e -> {
                 currentItem++;
@@ -115,13 +117,14 @@ public class HTMPictureFrameTest {
             add(nextMovieButton, c);
 
             c.weightx = 0.5;
-            c.gridx = 1;
+            c.gridx = 2;
+            c.gridwidth = 1;
             c.anchor = GridBagConstraints.CENTER;
             add(imageIndexLabel, c);
 
             c.weightx = 1.0;
             c.gridx = 0;
-            c.gridwidth = 2;
+            c.gridwidth = 3;
             c.gridy = 1;
             startMovieButton.addActionListener(e -> {
                 final double[][] movie = MovieUtils.createVerticalMovieFull(images[currentItem]);
@@ -149,6 +152,44 @@ public class HTMPictureFrameTest {
             c.weightx = 0.5;
             c.gridwidth = 1;
             c.gridx = 0;
+            c.gridy = 2;
+            totalLearnButton.addActionListener(e -> {
+                new Thread(() -> {
+                    ((JButton) e.getSource()).setEnabled(false);
+                    startLearnButton.setEnabled(false);
+                    for (int i = 0; i < LEVEL_AMOUNT - 1; i++) {
+                        while (currentItem < (currentLevel + 1) * LEARN_AMOUNT) {
+                            htmPicture.learnLevel(i, MovieUtils.createHorizontalMovieFull(images[currentItem]));
+                            htmPicture.learnLevel(i, MovieUtils.createVerticalMovieFull(images[currentItem]));
+
+                            currentItem++;
+                            currentImage = MovieUtils.toDouble(images[currentItem]);
+                            imagePanel.repaint();
+                            imageIndexLabel.setText("" + currentItem);
+                        }
+                        htmPicture.finalizeLevelLearning(currentLevel);
+                        currentLevel++;
+                        learningLevelLabel.setText("" + currentLevel);
+                    }
+                    while (currentItem < (currentLevel + 1) * LEARN_AMOUNT) {
+                        htmPicture.learningAll(MovieUtils.createHorizontalMovieFull(images[currentItem]), labels[currentItem]);
+                        htmPicture.learningAll(MovieUtils.createVerticalMovieFull(images[currentItem]), labels[currentItem]);
+
+                        currentItem++;
+                        currentImage = MovieUtils.toDouble(images[currentItem]);
+                        imagePanel.repaint();
+                        imageIndexLabel.setText("" + currentItem);
+                    }
+                    htmPicture.prepare();
+                    startRecognitionButton.setEnabled(true);
+                    getStatisticButton.setEnabled(true);
+                }).start();
+            });
+            add(totalLearnButton, c);
+
+            c.weightx = 0.5;
+            c.gridwidth = 1;
+            c.gridx = 1;
             c.gridy = 2;
             startLearnButton.addActionListener(e -> {
                 new Thread(() -> {
@@ -182,13 +223,14 @@ public class HTMPictureFrameTest {
             add(startLearnButton, c);
 
             c.weightx = 0.5;
-            c.gridx = 1;
+            c.gridwidth = 1;
+            c.gridx = 2;
             c.gridy = 2;
             c.anchor = GridBagConstraints.CENTER;
             add(learningLevelLabel, c);
 
             c.weightx = 0.5;
-            c.gridwidth = 1;
+            c.gridwidth = 2;
             c.gridx = 0;
             c.gridy = 3;
             startRecognitionButton.addActionListener(e -> {
@@ -199,13 +241,14 @@ public class HTMPictureFrameTest {
             add(startRecognitionButton, c);
 
             c.weightx = 0.5;
-            c.gridx = 1;
+            c.gridwidth = 1;
+            c.gridx = 2;
             c.gridy = 3;
             c.anchor = GridBagConstraints.CENTER;
             add(recognitionLabel, c);
 
             c.weightx = 0.5;
-            c.gridwidth = 1;
+            c.gridwidth = 2;
             c.gridx = 0;
             c.gridy = 4;
             getStatisticButton.addActionListener(e -> {
@@ -225,6 +268,7 @@ public class HTMPictureFrameTest {
                             recognitionLabel.setForeground(Color.red);
                         }
                         currentItem++;
+                        imageIndexLabel.setText("" + currentItem);
                         counter++;
                     }
                     ((JButton) e.getSource()).setEnabled(true);
@@ -234,15 +278,16 @@ public class HTMPictureFrameTest {
             add(getStatisticButton, c);
 
             c.weightx = 0.5;
-            c.gridx = 1;
+            c.gridwidth = 1;
+            c.gridx = 2;
             c.gridy = 4;
             c.anchor = GridBagConstraints.CENTER;
             add(statisticLabel, c);
 
             c.weightx = 1.0;
-            c.ipady = 100;
+            c.ipady = 200;
             c.gridx = 0;
-            c.gridwidth = 2;
+            c.gridwidth = 3;
             c.gridy = 5;
             add(imagePanel, c);
         }
