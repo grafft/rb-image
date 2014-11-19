@@ -69,6 +69,10 @@ public abstract class AbstractHTMNode {
         return normalizeClusterDistances(clusterDists);
     }
 
+    public double[] dynamicProcess(double[][] movie) {
+        return new double[0];
+    }
+
     protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {
         double[] result = new double[clusterDists.size()];
         double sum = clusterDists.values().stream().reduce(0.0, Double::sum);

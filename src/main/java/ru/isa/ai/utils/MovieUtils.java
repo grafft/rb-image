@@ -6,6 +6,34 @@ package ru.isa.ai.utils;
  * Time: 14:11
  */
 public class MovieUtils {
+    public static double[][] createHMovieForNode(double[] image, int nodeAmount, int nodeIndex) {
+        int imageSize = (int) Math.sqrt(image.length);
+        int nodeSize = imageSize / nodeAmount;
+        double[][] movie = new double[nodeAmount][nodeSize * nodeSize];
+        for (int i = 0; i < nodeAmount; i++) {
+            for (int j = 0; j < nodeSize; j++) {
+                for (int k = 0; k < nodeSize; k++) {
+                    movie[i][j * nodeSize + k] = image[(nodeIndex * nodeSize + j) * imageSize + i * nodeSize + k];
+                }
+            }
+        }
+        return movie;
+    }
+
+    public static double[][] createVMovieForNode(double[] image, int nodeAmount, int nodeIndex) {
+        int imageSize = (int) Math.sqrt(image.length);
+        int nodeSize = imageSize / nodeAmount;
+        double[][] movie = new double[nodeAmount][nodeSize * nodeSize];
+        for (int i = 0; i < nodeAmount; i++) {
+            for (int j = 0; j < nodeSize; j++) {
+                for (int k = 0; k < nodeSize; k++) {
+                    movie[i][j * nodeSize + k] = image[(i * nodeSize + j) * imageSize + nodeIndex * nodeSize + k];
+                }
+            }
+        }
+        return movie;
+    }
+
     public static double[][] createHorizontalMovie(byte[] image) {
         int size = (int) Math.sqrt(image.length);
         double[][] movie = new double[2 * size][image.length];

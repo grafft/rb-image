@@ -31,29 +31,8 @@ public class HTMNetwork {
         logger.info(String.format("Initialization: %d levels", levels.length));
         for (int i = 0; i < levels.length; i++) {
             for (int j = 0; j < levels[i].length; j++) {
-                levels[i][j] = i == 0 ? new ClusteredHTMNode(30, inputCounts[i] / (xLevelSizes[0] * yLevelSizes[0]), nodeOutputCounts[0]) :
+                levels[i][j] = i == 0 ? new ClusteredHTMNode(30, inputCounts[0] / (xLevelSizes[0] * yLevelSizes[0]), nodeOutputCounts[0]) :
                         new SimpleHTMNode(nodeOutputCounts[i]);
-            }
-        }
-    }
-
-    public HTMNetwork(int levelCount, int xInput, int yInput, int[] xLevelSizes, int[] yLevelSizes,
-                      int[] nodeOutputCounts) {
-        this.xLevelSizes = xLevelSizes;
-        this.yLevelSizes = yLevelSizes;
-        this.nodeOutputCounts = nodeOutputCounts;
-        inputCounts[0] = xInput * yInput;
-        levels = new AbstractHTMNode[levelCount][];
-        for (int i = 0; i < levelCount; i++) {
-            int levelAmount = xLevelSizes[levelCount] * yLevelSizes[levelCount];
-            levels[i] = new AbstractHTMNode[levelAmount];
-            inputCounts[i + 1] = xLevelSizes[i] * yLevelSizes[i] * nodeOutputCounts[i];
-            for (int j = 0; j < levelAmount; j++) {
-                if (i == 0) {
-                    levels[i][j] = new ClusteredHTMNode(30, inputCounts[i] / (this.xLevelSizes[i] * this.yLevelSizes[i]), nodeOutputCounts[0]);
-                } else {
-                    levels[i][j] = new SimpleHTMNode(nodeOutputCounts[i]);
-                }
             }
         }
     }
@@ -126,4 +105,5 @@ public class HTMNetwork {
         }
         return classifier.classify(processedInput);
     }
+
 }

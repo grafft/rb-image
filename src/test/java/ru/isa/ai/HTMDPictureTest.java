@@ -2,6 +2,7 @@ package ru.isa.ai;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.isa.ai.htm.HTMDNetwork;
 import ru.isa.ai.htm.HTMNetwork;
 import ru.isa.ai.utils.MNISTDatasetReader;
 import ru.isa.ai.utils.MovieUtils;
@@ -11,11 +12,11 @@ import java.io.IOException;
 
 /**
  * Author: Aleksandr Panov
- * Date: 23.10.2014
- * Time: 11:36
+ * Date: 19.11.2014
+ * Time: 17:19
  */
-public class HTMPictureTest {
-    private static final Logger logger = LogManager.getLogger(HTMPictureTest.class.getSimpleName());
+public class HTMDPictureTest {
+    private static final Logger logger = LogManager.getLogger(HTMDPictureTest.class.getSimpleName());
 
     public static final int LEVEL_AMOUNT = 2;
     public static final int SIZE = 2000;
@@ -28,14 +29,16 @@ public class HTMPictureTest {
         byte[][] images = reader.readData();
         byte[] labels = reader.getLabels();
 
-        HTMNetwork htmPicture = new HTMNetwork();
+        HTMDNetwork htmPicture = new HTMDNetwork(2, 28, 28,
+                new int[]{7, 4},
+                new int[]{7, 4},
+                new int[]{9, 4});
         int currentItem = 0;
 
         for (int i = 0; i < LEVEL_AMOUNT; i++) {
             logger.info(String.format("Start learning in %d level", i));
             while (currentItem < (i + 1) * SIZE) {
-                htmPicture.learnLevel(i, MovieUtils.createHorizontalMovieFull(images[currentItem]));
-                htmPicture.learnLevel(i, MovieUtils.createVerticalMovieFull(images[currentItem]));
+                htmPicture.learnLevel(i, MovieUtils.toDouble(images[currentItem]));
 
                 currentItem++;
             }
@@ -43,8 +46,8 @@ public class HTMPictureTest {
         }
         logger.info(String.format("Start learning in top level"));
         while (currentItem < (LEVEL_AMOUNT + 1) * SIZE) {
-            htmPicture.learningAll(MovieUtils.createHorizontalMovieFull(images[currentItem]), labels[currentItem]);
-            htmPicture.learningAll(MovieUtils.createVerticalMovieFull(images[currentItem]), labels[currentItem]);
+            htmPicture.learningAll(MovieUtils.toDouble(images[currentItem]), labels[currentItem]);
+            htmPicture.learningAll(MovieUtils.toDouble(images[currentItem]), labels[currentItem]);
 
             currentItem++;
         }
@@ -60,5 +63,4 @@ public class HTMPictureTest {
         }
         logger.info("Correctness: " + correct / TEST_SIZE);
     }
-
 }

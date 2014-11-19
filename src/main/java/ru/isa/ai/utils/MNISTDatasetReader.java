@@ -30,7 +30,6 @@ public class MNISTDatasetReader {
             ByteBuffer infoBuffer = ByteBuffer.wrap(info);
             int magicNumber = infoBuffer.getInt();
             int itemsAmount = infoBuffer.getInt();
-            System.out.println(String.format("Magic number: %d, number of items: %d", magicNumber, itemsAmount));
 
             labels = new byte[itemsAmount];
             int readed = labelStream.read(labels, 0, itemsAmount);
@@ -50,7 +49,6 @@ public class MNISTDatasetReader {
             }
             int rowsAmount = imageInfoBuffer.getInt();
             int columnsAmount = imageInfoBuffer.getInt();
-            System.out.println(String.format("Magic number: %d, number of items: %d, rows: %d, columns: %d", magicNumber, itemsAmount, rowsAmount, columnsAmount));
 
             images = new byte[itemsAmount][];
             for (int i = 0; i < itemsAmount; i++) {
