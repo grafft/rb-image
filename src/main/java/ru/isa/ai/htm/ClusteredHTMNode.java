@@ -53,6 +53,7 @@ public class ClusteredHTMNode extends AbstractHTMNode {
 
     @Override
     protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {
+        // TODO AP: it is part of algorithm but why it is required?
 //        for (int i = 0; i < clusterDists.size(); i++) {
 //            double dist = clusterDists.get(i);
 //            double newDist = Math.exp(-dist * dist / SIGMA);
