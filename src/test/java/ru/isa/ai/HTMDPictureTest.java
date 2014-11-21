@@ -3,7 +3,6 @@ package ru.isa.ai;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.isa.ai.htm.HTMDNetwork;
-import ru.isa.ai.htm.HTMNetwork;
 import ru.isa.ai.utils.MNISTDatasetReader;
 import ru.isa.ai.utils.MovieUtils;
 
@@ -30,9 +29,9 @@ public class HTMDPictureTest {
         byte[] labels = reader.getLabels();
 
         HTMDNetwork htmPicture = new HTMDNetwork(2, 28, 28,
-                new int[]{7, 4},
-                new int[]{7, 4},
-                new int[]{9, 4});
+                new int[]{2 * 7, 2*4}, //level node counts
+                new int[]{7, 3}, // level times
+                new int[]{9, 4}); // node outputs
         int currentItem = 0;
 
         for (int i = 0; i < LEVEL_AMOUNT; i++) {

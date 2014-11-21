@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.DoubleStream;
 
 /**
  * Author: Aleksandr Panov
@@ -70,7 +71,15 @@ public abstract class AbstractHTMNode {
     }
 
     public double[] dynamicProcess(double[][] movie) {
-        return new double[0];
+        double[] result = new double[maxTGNumber];
+        for (double[] input : movie) {
+            double[] partResult = process(input);
+            for (int i = 0; i < result.length; i++)
+                result[i] *= partResult[i];
+        }
+        double max = DoubleStream.of(result).max().getAsDouble();
+        result = DoubleStream.of(result).map(value -> value / max).toArray();
+        return result;
     }
 
     protected double[] normalizeClusterDistances(Map<Integer, Double> clusterDists) {

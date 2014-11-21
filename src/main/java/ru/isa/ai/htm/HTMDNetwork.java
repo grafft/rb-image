@@ -13,35 +13,32 @@ import ru.isa.ai.utils.MovieUtils;
 public class HTMDNetwork {
     private static final Logger logger = LogManager.getLogger(HTMDNetwork.class.getSimpleName());
 
-    private int[] xLevelSizes;
-    private int[] yLevelSizes;
+    private int[] levelNodeAmount;
     private int[] nodeOutputCounts;
 
     private AbstractHTMNode[][] levels;
     private TopPatternClassifier classifier;
 
-    public HTMDNetwork(int levelCount, int xInput, int yInput, int[] xLevelSizes, int[] yLevelSizes, int[] nodeOutputCounts) {
-        this.xLevelSizes = xLevelSizes;
-        this.yLevelSizes = yLevelSizes;
+    public HTMDNetwork(int levelCount, int xInput, int yInput, int[] levelNodeAmount, int[] levelTimes, int[] nodeOutputCounts) {
+        this.levelNodeAmount = levelNodeAmount;
         this.nodeOutputCounts = nodeOutputCounts;
         levels = new AbstractHTMNode[levelCount][];
         for (int i = 0; i < levelCount; i++) {
-            int levelAmount = xLevelSizes[levelCount] * yLevelSizes[levelCount];
-            levels[i] = new AbstractHTMNode[levelAmount];
-            for (int j = 0; j < levelAmount; j++) {
+            levels[i] = new AbstractHTMNode[levelNodeAmount[i]];
+            for (int j = 0; j < levelNodeAmount[i]; j++) {
                 if (i == 0) {
-                    levels[i][j] = new ClusteredHTMNode(30, xInput * yInput / (this.xLevelSizes[i] * this.yLevelSizes[i]), nodeOutputCounts[0]);
+                    levels[i][j] = new ClusteredHTMNode(30, 4 * xInput * yInput / (levelNodeAmount[i] * levelTimes[i]), nodeOutputCounts[0]);
                 } else {
                     levels[i][j] = new SimpleHTMNode(nodeOutputCounts[i]);
                 }
             }
         }
 
-        classifier = new TopPatternClassifier(xLevelSizes[1] * yLevelSizes[1] * nodeOutputCounts[1]);
+        classifier = new TopPatternClassifier(levelNodeAmount[1] * nodeOutputCounts[1]);
     }
 
     public void learnLevel(int level, double[] image) {
-        int nodeAmount = xLevelSizes[level] * yLevelSizes[level];
+        int nodeAmount = levelNodeAmount[level];
         double[] processedInput = image;
         for (int i = 0; i < level; i++) {
             processedInput = processLevel(i, processedInput);
@@ -61,7 +58,7 @@ public class HTMDNetwork {
     }
 
     public double[] processLevel(int level, double[] image) {
-        int nodeAmount = xLevelSizes[level] * yLevelSizes[level];
+        int nodeAmount = levelNodeAmount[level];
         double[] output = new double[nodeOutputCounts[level] * nodeAmount];
 
         for (int i = 0; i < nodeAmount / 2; i++) {
@@ -80,7 +77,7 @@ public class HTMDNetwork {
     }
 
     public void finalizeLevelLearning(int level) {
-        for (int i = 0; i < xLevelSizes[level] * xLevelSizes[level]; i++) {
+        for (int i = 0; i < levelNodeAmount[level]; i++) {
             levels[level][i].finalizeLearning();
         }
     }
