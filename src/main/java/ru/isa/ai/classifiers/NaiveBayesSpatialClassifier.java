@@ -17,12 +17,12 @@ import java.util.Arrays;
  * Date: 29.10.2014
  * Time: 12:57
  */
-public class TopPatternClassifier {
-    private static final Logger logger = LogManager.getLogger(TopPatternClassifier.class.getSimpleName());
+public class NaiveBayesSpatialClassifier {
+    private static final Logger logger = LogManager.getLogger(NaiveBayesSpatialClassifier.class.getSimpleName());
     private Instances examples;
     private NaiveBayes nbc = new NaiveBayes();
 
-    public TopPatternClassifier(int length) {
+    public NaiveBayesSpatialClassifier(int length) {
         ArrayList<Attribute> attributes = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             attributes.add(new Attribute("attr_" + i, i));

@@ -1,7 +1,7 @@
 package ru.isa.ai.htm;
 
 import ru.isa.ai.clusterers.MarkovNode;
-import ru.isa.ai.clusterers.PatternClusterer;
+import ru.isa.ai.clusterers.OnlineKMeanSpatialClusterer;
 
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -13,12 +13,12 @@ import java.util.stream.IntStream;
  */
 public class ClusteredHTMNode extends AbstractHTMNode {
     private int patternsAmount;
-    private PatternClusterer inputClusterer;
+    private OnlineKMeanSpatialClusterer inputClusterer;
 
     public ClusteredHTMNode(int k, int dimension, int maxTGNumber) {
         super(maxTGNumber);
         this.patternsAmount = k;
-        inputClusterer = new PatternClusterer(k, dimension);
+        inputClusterer = new OnlineKMeanSpatialClusterer(k, dimension);
         for (int i = 0; i < k; i++) {
             markovNet.add(new MarkovNode(i, inputClusterer.getMeans()[i]));
         }

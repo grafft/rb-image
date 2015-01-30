@@ -2,7 +2,7 @@ package ru.isa.ai.htm;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.isa.ai.classifiers.TopPatternClassifier;
+import ru.isa.ai.classifiers.NaiveBayesSpatialClassifier;
 
 /**
  * Author: Aleksandr Panov
@@ -25,7 +25,7 @@ public class HTMNetwork {
             new AbstractHTMNode[xLevelSizes[1] * yLevelSizes[1]]
     };
 
-    private TopPatternClassifier classifier = new TopPatternClassifier(xLevelSizes[1] * yLevelSizes[1] * nodeOutputCounts[1]);
+    private NaiveBayesSpatialClassifier classifier = new NaiveBayesSpatialClassifier(xLevelSizes[1] * yLevelSizes[1] * nodeOutputCounts[1]);
 
     public HTMNetwork() {
         logger.info(String.format("Initialization: %d levels", levels.length));

@@ -1,6 +1,6 @@
 package ru.isa.ai.htm;
 
-import ru.isa.ai.clusterers.MarkovNetClusterer;
+import ru.isa.ai.clusterers.AHTemporalClusterer;
 import ru.isa.ai.clusterers.MarkovNode;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public abstract class AbstractHTMNode {
 
     protected List<MarkovNode> markovNet = new ArrayList<>();
     protected MarkovNode previous = null;
-    protected MarkovNetClusterer clusterer;
+    protected AHTemporalClusterer clusterer;
 
     protected AbstractHTMNode(int maxTGNumber) {
         this.maxTGNumber = maxTGNumber;
@@ -42,7 +42,7 @@ public abstract class AbstractHTMNode {
     public void finalizeLearning() {
         normalizeMarkovNet();
 
-        clusterer = new MarkovNetClusterer(markovNet, maxTGNumber);
+        clusterer = new AHTemporalClusterer(markovNet, maxTGNumber);
         clusterer.buildClusters();
     }
 

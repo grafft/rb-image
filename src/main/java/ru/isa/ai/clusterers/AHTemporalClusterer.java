@@ -13,13 +13,13 @@ import java.util.PriorityQueue;
  * Date: 29.10.2014
  * Time: 12:47
  */
-public class MarkovNetClusterer {
+public class AHTemporalClusterer {
 
     private List<MarkovNode> markovNet = new ArrayList<>();
     private int[] clusterNumbers;
     private int maxCLusterNumber;
 
-    public MarkovNetClusterer(List<MarkovNode> markovNet, int maxCLusterNumber) {
+    public AHTemporalClusterer(List<MarkovNode> markovNet, int maxCLusterNumber) {
         this.markovNet = markovNet;
         this.maxCLusterNumber = maxCLusterNumber;
     }

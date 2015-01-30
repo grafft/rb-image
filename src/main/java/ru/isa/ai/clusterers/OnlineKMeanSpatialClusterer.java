@@ -8,12 +8,12 @@ import java.util.stream.IntStream;
  * Date: 31.10.2014
  * Time: 17:40
  */
-public class PatternClusterer {
+public class OnlineKMeanSpatialClusterer {
     private int k;
     private double[][] means;
     private int[] counts;
 
-    public PatternClusterer(int k, int dimension) {
+    public OnlineKMeanSpatialClusterer(int k, int dimension) {
         this.k = k;
         means = new double[k][dimension];
         for (int i = 0; i < k; i++) {
