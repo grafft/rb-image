@@ -1,4 +1,4 @@
-package ru.isa.ai.clusterers;
+package ru.isa.ai.clusterers.temporal;
 
 import java.util.HashMap;
 import java.util.Map;

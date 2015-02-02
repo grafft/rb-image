@@ -1,7 +1,7 @@
 package ru.isa.ai.htm;
 
-import ru.isa.ai.clusterers.MarkovNode;
-import ru.isa.ai.clusterers.OnlineKMeanSpatialClusterer;
+import ru.isa.ai.clusterers.temporal.MarkovNode;
+import ru.isa.ai.clusterers.spatial.OnlineKMeanSpatialClusterer;
 
 import java.util.Map;
 import java.util.stream.IntStream;

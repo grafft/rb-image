@@ -1,6 +1,4 @@
-package ru.isa.ai.clusterers;
-
-import ru.isa.ai.clusterers.MarkovNode;
+package ru.isa.ai.clusterers.temporal;
 
 import java.io.Serializable;
 import java.util.ArrayList;

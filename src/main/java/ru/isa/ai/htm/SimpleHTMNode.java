@@ -1,6 +1,6 @@
 package ru.isa.ai.htm;
 
-import ru.isa.ai.clusterers.MarkovNode;
+import ru.isa.ai.clusterers.temporal.MarkovNode;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;

@@ -1,4 +1,4 @@
-package ru.isa.ai.clusterers;
+package ru.isa.ai.clusterers.spatial;
 
 import java.util.stream.IntStream;
 

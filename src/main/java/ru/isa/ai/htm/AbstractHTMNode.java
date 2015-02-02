@@ -1,7 +1,7 @@
 package ru.isa.ai.htm;
 
-import ru.isa.ai.clusterers.AHTemporalClusterer;
-import ru.isa.ai.clusterers.MarkovNode;
+import ru.isa.ai.clusterers.temporal.AHTemporalClusterer;
+import ru.isa.ai.clusterers.temporal.MarkovNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
