@@ -6,10 +6,8 @@ import ru.isa.ai.eik.IKNetwork;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -93,7 +91,7 @@ public class IKNetworkTest {
     private static double[][] createNoisy(double[][] input) {
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
-                input[i][j] = input[i][j] + rand.nextGaussian() * 0.01;
+                input[i][j] = input[i][j] + rand.nextGaussian() * 0.00;
                 input[i][j] = input[i][j] < 0 ? 0 : (input[i][j] > 1 ? 1 : input[i][j]);
             }
         }
@@ -110,7 +108,7 @@ public class IKNetworkTest {
             getContentPane().add(statePanel);
 
             pack();
-            setSize(new Dimension(900, 600));
+            setSize(new Dimension(800, 850));
             setVisible(true);
         }
     }
