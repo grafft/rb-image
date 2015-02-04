@@ -12,8 +12,9 @@ import java.util.stream.IntStream;
 public class SOMSpatialClusterer extends RSOMClusterer {
     private double ro = 0.125;
 
-    public SOMSpatialClusterer(int inputDimension, int[] growthRate) {
-        super(inputDimension, growthRate, 1.0);
+    public SOMSpatialClusterer(int inputDimension, int outputDimension, int[] growthRate) {
+        super(inputDimension, outputDimension, growthRate);
+        alpha = 1.0;
     }
 
     protected double[] calculateOutput(double[] input, int bmu) {
