@@ -1,5 +1,6 @@
 package ru.isa.ai.clusterers;
 
+import java.util.Arrays;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -30,15 +31,16 @@ public class RSOMClusterer {
         this.growthRate = growthRate;
         neurons = new double[outputDimension][];
         diffMemory = new double[outputDimension][];
-        for (int i = 0; i < inputDimension; i++) {
+        for (int i = 0; i < outputDimension; i++) {
             if (i % ((outputDimension - 1) / (startSize - 1)) == 0) {
-                neurons[i] = new double[outputDimension];
+                neurons[i] = new double[inputDimension];
+                diffMemory[i] = new double[inputDimension];
                 for (int j = 0; j < inputDimension; j++) {
                     neurons[i][j] = Math.random();
-                    diffMemory[i][j] = 0;
                 }
             } else {
                 neurons[i] = null;
+                diffMemory[i] = new double[inputDimension];
             }
 
         }
@@ -51,7 +53,7 @@ public class RSOMClusterer {
             if (neurons[i] != null) {
                 final int index = i;
                 diffMemory[index] = IntStream.range(0, neurons[index].length)
-                        .mapToDouble(item -> ((1 - alpha) * diffMemory[index][item] + alpha * (neurons[index][item] - input[item])))
+                        .mapToDouble(item -> ((1 - alpha) * diffMemory[index][item] + alpha * (input[item] - neurons[index][item])))
                         .toArray();
                 double diffNorm = DoubleStream.of(diffMemory[index])
                         .reduce(0, (res, i2) -> res + i2 * i2);
@@ -80,7 +82,7 @@ public class RSOMClusterer {
     private void growing() {
         inputCounter++;
         int prevIndex = -1;
-        if (growthRate.length > 0 && inputCounter == growthRate[growthCounter]) {
+        if (growthRate.length > 0 && growthCounter < growthRate.length && inputCounter == growthRate[growthCounter]) {
             for (int i = 0; i < neurons.length; i++) {
                 if (neurons[i] != null) {
                     if (prevIndex != -1) {
@@ -105,6 +107,21 @@ public class RSOMClusterer {
         return result;
     }
 
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < neurons.length; i++) {
+            if(neurons[i] != null){
+                builder.append(Arrays.toString(neurons[i]));
+            }else{
+                builder.append("NULL");
+            }
+
+            if(i < neurons.length - 1)
+                builder.append("\n");
+        }
+        return builder.toString();
+    }
+
     public void setSigma(double sigma) {
         this.sigma = sigma;
     }
@@ -115,5 +132,9 @@ public class RSOMClusterer {
 
     public void setAlpha(double alpha) {
         this.alpha = alpha;
+    }
+
+    public double[][] getNeurons() {
+        return neurons;
     }
 }

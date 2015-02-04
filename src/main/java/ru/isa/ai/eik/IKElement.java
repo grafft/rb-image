@@ -38,9 +38,9 @@ public class IKElement {
         int[] tempGrow = StringUtils.parseIntArray(properties.getProperty(TEMP_GROW_PROP + "." + layer));
 
         spatialClusterer = new SOMSpatialClusterer(spDim, spMaxOut, spGrow);
-        spatialClusterer.setSigma(Integer.parseInt(properties.getProperty(SPAT_SIGMA_PROP + "." + layer)));
+        spatialClusterer.setSigma(Double.parseDouble(properties.getProperty(SPAT_SIGMA_PROP + "." + layer)));
         temporalClusterer = new RSOMTemporalClusterer(tempDim, tempMaxOut, tempGrow);
-        temporalClusterer.setSigma(Integer.parseInt(properties.getProperty(TEMP_SIGMA_PROP + "." + layer)));
+        temporalClusterer.setSigma(Double.parseDouble(properties.getProperty(TEMP_SIGMA_PROP + "." + layer)));
     }
 
     public double[] process(double[] input) {
@@ -48,5 +48,22 @@ public class IKElement {
         double[] output = temporalClusterer.process(temp);
 
         return output;
+    }
+
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("SOM state:\n");
+        builder.append("\t").append(spatialClusterer.toString()).append("\n");
+        builder.append("RSOM state:\n");
+        builder.append("\t").append(temporalClusterer.toString()).append("\n");
+        return builder.toString();
+    }
+
+    public SOMSpatialClusterer getSpatialClusterer() {
+        return spatialClusterer;
+    }
+
+    public RSOMTemporalClusterer getTemporalClusterer() {
+        return temporalClusterer;
     }
 }

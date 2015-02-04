@@ -20,11 +20,13 @@ public class SOMSpatialClusterer extends RSOMClusterer {
     protected double[] calculateOutput(double[] input, int bmu) {
         double[] result = new double[neurons.length];
         for (int i = 0; i < neurons.length; i++) {
-            final int index = i;
-            double dist = IntStream.range(0, neurons[index].length)
-                    .mapToDouble(item -> (neurons[index][item] - input[item]))
-                    .reduce(0, (res, item) -> res + item * item);
-            result[i] = Math.exp(-dist / 2 * ro * ro);
+            if (neurons[i] != null) {
+                final int index = i;
+                double dist = IntStream.range(0, neurons[index].length)
+                        .mapToDouble(item -> (neurons[index][item] - input[item]))
+                        .reduce(0, (res, item) -> res + item * item);
+                result[i] = Math.exp(-dist / 2 * ro * ro);
+            }
         }
 
         return result;

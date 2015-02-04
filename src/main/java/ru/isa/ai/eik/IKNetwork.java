@@ -48,6 +48,7 @@ public class IKNetwork {
     }
 
     public void process(double[][] squareInput) {
+        double[][] layerInput = squareInput;
         for (int key : layers.keySet()) {
             int counter = 0;
             for (int index : layers.get(key)) {
@@ -55,9 +56,25 @@ public class IKNetwork {
                 int y = counter / mapper.getOutXCount();
                 int x = counter - y * mapper.getOutXCount();
 
-                double[] result = elements.get(index).process(mapper.map(squareInput, x, y));
+                double[] result = elements.get(index).process(mapper.map(layerInput, x, y));
                 counter++;
             }
         }
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int key : layers.keySet()) {
+            builder.append("Layer ").append(key).append(":\n");
+            for (int index : layers.get(key)) {
+                builder.append("\tElement ").append(index).append(":\n");
+                builder.append("\t\t").append(elements.get(index).toString()).append("\n");
+            }
+        }
+        return builder.toString();
+    }
+
+    public Map<Integer, IKElement> getElements() {
+        return elements;
     }
 }
