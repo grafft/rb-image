@@ -17,6 +17,7 @@ public class RSOMClusterer {
     protected double gamma = 0.1;
     protected double[][] neurons; // weights of neuron synapses connected to inputs
     protected double[][] diffMemory;
+    protected int currentBMU;
 
     private int outputDimension;
     private int startSize = 2;
@@ -48,7 +49,7 @@ public class RSOMClusterer {
 
     public double[] process(double[] input) {
         double minDiff = Double.MAX_VALUE; // it is square of min euclidean distance
-        int bmu = -1;
+        currentBMU = -1;
         for (int i = 0; i < neurons.length; i++) {
             if (neurons[i] != null) {
                 final int index = i;
@@ -58,7 +59,7 @@ public class RSOMClusterer {
                 double diffNorm = DoubleStream.of(diffMemory[index])
                         .reduce(0, (res, i2) -> res + i2 * i2);
                 if (minDiff > diffNorm) {
-                    bmu = i;
+                    currentBMU = i;
                     minDiff = diffNorm;
                 }
             }
@@ -67,13 +68,16 @@ public class RSOMClusterer {
         double mu = minDiff / input.length;
         for (int i = 0; i < neurons.length; i++) {
             if (neurons[i] != null) {
-                double h = Math.exp(-(i - bmu) * (i - bmu) / mu * sigma);
-                for (int j = 0; j < neurons[i].length; j++)
-                    neurons[i][j] = neurons[i][j] + gamma * h * diffMemory[i][j];
+                int bmuDist = (i - currentBMU) / ((outputDimension - 1) / (startSize + growthCounter - 1));
+                double h = Math.exp(-(bmuDist * bmuDist) / (mu * sigma));
+                final int index = i;
+                neurons[index] = IntStream.range(0, neurons[index].length)
+                        .mapToDouble(item -> (neurons[index][item] + gamma * h * diffMemory[index][item]))
+                        .toArray();
             }
         }
 
-        double[] result = calculateOutput(input, bmu);
+        double[] result = calculateOutput(input);
         growing();
 
         return result;
@@ -98,10 +102,10 @@ public class RSOMClusterer {
         }
     }
 
-    protected double[] calculateOutput(double[] input, int bmu) {
+    protected double[] calculateOutput(double[] input) {
         double[] result = new double[outputDimension];
         for (int i = 0; i < neurons.length; i++) {
-            result[i] = i == bmu ? 1 : 0;
+            result[i] = i == currentBMU ? 1 : 0;
         }
 
         return result;
@@ -110,16 +114,20 @@ public class RSOMClusterer {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < neurons.length; i++) {
-            if(neurons[i] != null){
+            if (neurons[i] != null) {
                 builder.append(Arrays.toString(neurons[i]));
-            }else{
+            } else {
                 builder.append("NULL");
             }
 
-            if(i < neurons.length - 1)
+            if (i < neurons.length - 1)
                 builder.append("\n");
         }
         return builder.toString();
+    }
+
+    public int getCurrentBMU() {
+        return currentBMU;
     }
 
     public void setSigma(double sigma) {
@@ -132,6 +140,14 @@ public class RSOMClusterer {
 
     public void setAlpha(double alpha) {
         this.alpha = alpha;
+    }
+
+    public int getStartSize() {
+        return startSize;
+    }
+
+    public void setStartSize(int startSize) {
+        this.startSize = startSize;
     }
 
     public double[][] getNeurons() {
