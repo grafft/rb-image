@@ -16,6 +16,8 @@ public class IKElement {
     public static final String TEMP_DIM_PROP = "temp_input.dimension";
     public static final String SPAT_MAXOUT_PROP = "spat_output_max.dimension";
     public static final String TEMP_MAXOUT_PROP = "temp_output_max.dimension";
+    public static final String SPAT_START_PROP = "spat_start_size";
+    public static final String TEMP_START_PROP = "temp_start_size";
     public static final String SPAT_GROW_PROP = "spat.grow_rate";
     public static final String TEMP_GROW_PROP = "temp.grow_rate";
 
@@ -34,13 +36,20 @@ public class IKElement {
         int tempDim = Integer.parseInt(properties.getProperty(TEMP_DIM_PROP + "." + layer));
         int spMaxOut = Integer.parseInt(properties.getProperty(SPAT_MAXOUT_PROP + "." + layer));
         int tempMaxOut = Integer.parseInt(properties.getProperty(TEMP_MAXOUT_PROP + "." + layer));
-        int[] spGrow = StringUtils.parseIntArray(properties.getProperty(SPAT_GROW_PROP + "." + layer));
-        int[] tempGrow = StringUtils.parseIntArray(properties.getProperty(TEMP_GROW_PROP + "." + layer));
+        int spatStartSize = Integer.parseInt(properties.getProperty(SPAT_START_PROP + "." + layer));
+        int tempStartSize = Integer.parseInt(properties.getProperty(TEMP_START_PROP + "." + layer));
+        int[] spGrow = {};
+        if (properties.containsKey(SPAT_GROW_PROP + "." + layer))
+            spGrow = StringUtils.parseIntArray(properties.getProperty(SPAT_GROW_PROP + "." + layer));
+        int[] tempGrow = {};
+        if (properties.containsKey(TEMP_GROW_PROP + "." + layer))
+            tempGrow = StringUtils.parseIntArray(properties.getProperty(TEMP_GROW_PROP + "." + layer));
 
-        spatialClusterer = new SOMSpatialClusterer(spDim, spMaxOut, spGrow);
+        spatialClusterer = new SOMSpatialClusterer(spDim, spMaxOut, spatStartSize, spGrow);
         spatialClusterer.setSigma(Double.parseDouble(properties.getProperty(SPAT_SIGMA_PROP + "." + layer)));
-        temporalClusterer = new RSOMTemporalClusterer(tempDim, tempMaxOut, tempGrow);
+        temporalClusterer = new RSOMTemporalClusterer(tempDim, tempMaxOut, tempStartSize, tempGrow);
         temporalClusterer.setSigma(Double.parseDouble(properties.getProperty(TEMP_SIGMA_PROP + "." + layer)));
+        temporalClusterer.setStartSize(tempStartSize);
     }
 
     public double[] process(double[] input) {
@@ -50,7 +59,7 @@ public class IKElement {
         return output;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("SOM state:\n");
         builder.append("\t").append(spatialClusterer.toString()).append("\n");

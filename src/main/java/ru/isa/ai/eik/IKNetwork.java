@@ -23,10 +23,7 @@ public class IKNetwork {
 
     private Map<Integer, IOMapper> layerMappers = new HashMap<>();
 
-    public IKNetwork(String propFileName) throws IOException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(propFileName));
-
+    public IKNetwork(Properties properties) {
         int layersNumber = Integer.parseInt(properties.getProperty(LAYERS_PROP));
         int index = 0;
         for (int i = 0; i < layersNumber; i++) {

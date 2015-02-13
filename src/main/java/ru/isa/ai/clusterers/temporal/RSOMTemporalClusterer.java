@@ -7,8 +7,8 @@ import ru.isa.ai.clusterers.RSOMClusterer;
  * Date: 02.02.2015
  * Time: 18:45
  */
-public class RSOMTemporalClusterer extends RSOMClusterer{
-    public RSOMTemporalClusterer(int inputDimension, int outputDimension, int[] growthRate) {
-        super(inputDimension, outputDimension, growthRate);
+public class RSOMTemporalClusterer extends RSOMClusterer {
+    public RSOMTemporalClusterer(int inputDimension, int outputDimension, int startSize, int[] growthRate) {
+        super(inputDimension, outputDimension, startSize, growthRate);
     }
 }

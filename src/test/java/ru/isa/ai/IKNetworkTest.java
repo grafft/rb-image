@@ -9,9 +9,10 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Arc2D;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Author: Aleksandr Panov
@@ -19,9 +20,11 @@ import java.util.Random;
  * Time: 18:55
  */
 public class IKNetworkTest {
+    private static final String NOISY_DEV_PROP = "noisy_dev";
     private static IKNetwork network;
     private static int counter = 0;
     private static double[][] currentImage;
+    private static double noisyDeviation;
     private static Random rand = new Random();
 
     private static final double[][] BLANK = {{0, 0, 0},
@@ -48,8 +51,11 @@ public class IKNetworkTest {
             {1, 1, 1}};
 
     public static void main(String[] args) throws IOException {
-        network = new IKNetwork(IKNetworkTest.class.getClassLoader().getResource("ike_test_1.properties").getPath());
-
+        String propPath = IKNetworkTest.class.getClassLoader().getResource("ike_test_1.properties").getPath();
+        Properties prop = new Properties();
+        prop.load(new FileInputStream(propPath));
+        network = new IKNetwork(prop);
+        noisyDeviation = Double.parseDouble(prop.getProperty(NOISY_DEV_PROP));
 //        for (int i = 0; i < 3000; i++) {
 //            double[][] next = getNextImage(i);
 //            double[][] noisy = createNoisy(next);
@@ -96,7 +102,7 @@ public class IKNetworkTest {
     private static double[][] createNoisy(double[][] input) {
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
-                input[i][j] = input[i][j] + rand.nextGaussian() * 0.10;
+                input[i][j] = input[i][j] == 0 ? rand.nextGaussian() * noisyDeviation : input[i][j];
                 input[i][j] = input[i][j] < 0 ? 0 : (input[i][j] > 1 ? 1 : input[i][j]);
             }
         }
@@ -198,14 +204,18 @@ public class IKNetworkTest {
             double[][] tempNeurons = network.getElements().get(0).getTemporalClusterer().getNeurons();
             for (int i = 0; i < tempNeurons.length; i++) {
                 if (tempNeurons[i] != null) {
-                    //Arrays.sort(tempNeurons[i]);
-                    //ArrayUtils.reverse(tempNeurons[i]);
+                    Map<Double, Integer> map = new TreeMap<>((o1, o2) -> -Double.compare(o1, o2));
                     for (int j = 0; j < tempNeurons[i].length; j++) {
+                        map.put(tempNeurons[i][j], j);
+                    }
+                    int cnt = 0;
+                    for (int index : map.values()) {
                         g2.setPaint(Color.BLACK);
-                        g2.drawString(String.format("%.2f", tempNeurons[i][j]), startX + i * 70, startY + j * 70 + 30);
-                        drawUnit(g2, startX + i * 70 + 30, startY + j * 70,
-                                network.getElements().get(0).getSpatialClusterer().getNeurons()[j],
+                        g2.drawString(String.format("%.3f", tempNeurons[i][index]), startX + i * 70, startY + cnt * 70 + 30);
+                        drawUnit(g2, startX + i * 70 + 30, startY + cnt * 70,
+                                network.getElements().get(0).getSpatialClusterer().getNeurons()[index],
                                 network.getElements().get(0).getTemporalClusterer().getCurrentBMU() == i);
+                        cnt++;
                     }
                 }
                 startX += 80;

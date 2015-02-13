@@ -27,9 +27,10 @@ public class RSOMClusterer {
 
     protected double alpha = 0.1;
 
-    public RSOMClusterer(int inputDimension, int outputDimension, int[] growthRate) {
+    public RSOMClusterer(int inputDimension, int outputDimension, int startSize, int[] growthRate) {
         this.outputDimension = outputDimension;
         this.growthRate = growthRate;
+        this.startSize = startSize;
         neurons = new double[outputDimension][];
         diffMemory = new double[outputDimension][];
         for (int i = 0; i < outputDimension; i++) {
@@ -48,7 +49,8 @@ public class RSOMClusterer {
     }
 
     public double[] process(double[] input) {
-        double minDiff = Double.MAX_VALUE; // it is square of min euclidean distance
+        double minSqDiff = Double.MAX_VALUE;
+        double minSqDist = 0;
         currentBMU = -1;
         for (int i = 0; i < neurons.length; i++) {
             if (neurons[i] != null) {
@@ -56,19 +58,25 @@ public class RSOMClusterer {
                 diffMemory[index] = IntStream.range(0, neurons[index].length)
                         .mapToDouble(item -> ((1 - alpha) * diffMemory[index][item] + alpha * (input[item] - neurons[index][item])))
                         .toArray();
-                double diffNorm = DoubleStream.of(diffMemory[index])
+                double diffSqNorm = DoubleStream.of(diffMemory[index])
                         .reduce(0, (res, i2) -> res + i2 * i2);
-                if (minDiff > diffNorm) {
+                double distSqNorm = IntStream.range(0, neurons[index].length)
+                        .mapToDouble(item -> (input[item] - neurons[index][item]))
+                        .reduce(0, (res, i2) -> res + i2 * i2);
+                if (minSqDiff > diffSqNorm) {
                     currentBMU = i;
-                    minDiff = diffNorm;
+                    minSqDiff = diffSqNorm;
+                    minSqDist = distSqNorm;
                 }
             }
         }
 
-        double mu = minDiff / input.length;
+        double mu = minSqDist / input.length;
+        //double mu = minSqDiff / input.length;
         for (int i = 0; i < neurons.length; i++) {
             if (neurons[i] != null) {
-                int bmuDist = (i - currentBMU) / ((outputDimension - 1) / (startSize + growthCounter - 1));
+                //int bmuDist = (i - currentBMU) / ((outputDimension - 1) / (startSize + growthCounter - 1));
+                int bmuDist = (i - currentBMU);
                 double h = Math.exp(-(bmuDist * bmuDist) / (mu * sigma));
                 final int index = i;
                 neurons[index] = IntStream.range(0, neurons[index].length)
