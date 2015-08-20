@@ -102,7 +102,7 @@ public class MNISTDatasetReaderTest {
             });
 
             pack();
-            setSize(new Dimension(400, 400));
+            setSize(new Dimension(400, 300));
             setVisible(true);
         }
     }

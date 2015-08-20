@@ -30,7 +30,7 @@ public class HTMPictureFrameTest {
     private static HTMNetwork htmPicture;
 
     public static void main(String[] args) throws IOException {
-        URL resource = HTMPictureTest.class.getClassLoader().getResource("train-labels.idx1-ubyte");
+        URL resource = HTMPictureTest.class.getClassLoader().getResource("train-labels-idx1-ubyte.gz");
         assert resource != null;
 
         File testFile = new File(resource.getPath());
