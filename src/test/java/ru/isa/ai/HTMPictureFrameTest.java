@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -29,11 +30,11 @@ public class HTMPictureFrameTest {
     private static byte[][] images;
     private static HTMNetwork htmPicture;
 
-    public static void main(String[] args) throws IOException {
-        URL resource = HTMPictureTest.class.getClassLoader().getResource("train-labels.idx1-ubyte");
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        URL resource = HTMPictureTest.class.getClassLoader().getResource("pictures/packages/20x1/train-labels.idx1-ubyte");
         assert resource != null;
 
-        File testFile = new File(resource.getPath());
+        File testFile = new File(resource.toURI().getPath());
         MNISTDatasetReader reader = new MNISTDatasetReader(testFile.getParentFile().getPath());
 
         images = reader.readData();
