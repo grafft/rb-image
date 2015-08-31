@@ -16,8 +16,7 @@ import java.util.Map;
 public abstract class AbstractHTMNode {
     public static final double SIGMA = 300 * 300;
 
-    //protected int maxTGNumber = 10;
-    protected int maxTGNumber = 3;
+    protected int maxTGNumber = 10;
 
     protected List<MarkovNode> markovNet = new ArrayList<>();
     protected MarkovNode previous = null;
