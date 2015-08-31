@@ -60,7 +60,8 @@ def get_set(folder, iterations, repeats, learning=True):
 
     p = Picture()
     p.load('pictures/samples/car/01.txt')
-    raw_set = generate_pics(['bird', 'cactus', 'car', 'cup', 'helicopter', 'loco', 'octopus', 'tree'], 8)
+    #raw_set = generate_pics(['bird', 'cactus', 'car', 'cup', 'helicopter', 'loco', 'octopus', 'tree'], 8)
+    raw_set = generate_pics(['loco', 'octopus', 'tree'], 8)
     #getting learning set
 
     if learning:
@@ -71,32 +72,44 @@ def get_set(folder, iterations, repeats, learning=True):
         l_name = 't10k-labels.idx1-ubyte'
     p_f = open(folder+'/'+p_name, 'wb')
     l_f = open(folder+'/'+l_name, 'wb')
-
-    l_f.write(struct.pack('>i', 128*repeats))
-
-    p_f.write(struct.pack('>i', 128*repeats))
+    l_f.write(struct.pack('>i', 48*4*repeats))
+    p_f.write(struct.pack('>i', 48*4*repeats))
     p_f.write(struct.pack('>i', 32))
     p_f.write(struct.pack('>i', 32))
 
     for label in raw_set:
         for img in raw_set[label]:
             p = img
-            for r in range(repeats):
+            for r in range(3*repeats):
                 pic = Picture(p.body)
                 for i in range(iterations):
-                    pic = add_noise(pic, 20)
-                    pic = add_noise(pic, -20)
+                    pic = add_noise(pic, 40)
+                    pic = add_noise(pic, -40)
                 for row in pic.body:
                     for i in row:
                         p_f.write(struct.pack('B', i))
-                l_f.write(struct.pack('B', label+1))
+                l_f.write(struct.pack('B', label))
                 pic.show(screen, PIXEL_SIZE)
                 pygame.display.update()
-
+    for label in raw_set:
+        for img in raw_set[label]:
+            p = img
+            for r in range(repeats):
+                pic = Picture(p.body)
+                for i in range(iterations):
+                    pic = add_noise(pic, 40)
+                    pic = add_noise(pic, -40)
+                for row in pic.body:
+                    for i in row:
+                        p_f.write(struct.pack('B', i))
+                l_f.write(struct.pack('B', label))
+                pic.show(screen, PIXEL_SIZE)
+                pygame.display.update()
     p_f.close()
     l_f.close()
 
 folder = 'pictures/packages/'
-get_set(folder+'20x1', 1, 4)
-get_set(folder+'20x1', 1, 1, False)
-#test()
+for i in range(1, 11):
+    get_set(folder+'20x'+str(i), i, 209)
+    print i
+#get_set(folder+'20x1', 1, 3, False)
